@@ -183,14 +183,14 @@ extension KeyboardInput on WidgetTester {
 
 /// Returns a physical keyboard key combination that expects to create the
 /// given [character].
-KeyCombo _keyComboForCharacter(String character) {
+_KeyCombo _keyComboForCharacter(String character) {
   if (_charactersToKey.containsKey(character)) {
-    return KeyCombo(_charactersToKey[character]!);
+    return _KeyCombo(_charactersToKey[character]!);
   }
   if (_shiftCharactersToKey.containsKey(character)) {
     final physicalKey = _enUSShiftCharactersToPhysicalKey[character] ?? _shiftCharactersToKey[character]!;
 
-    return KeyCombo(
+    return _KeyCombo(
       _shiftCharactersToKey[character]!,
       isShiftPressed: true,
       physicalKey: physicalKey,
@@ -328,8 +328,8 @@ const _enUSShiftCharactersToPhysicalKey = {
 
 /// A combination of pressed keys, including a logical key, and possibly one or
 /// more modifier keys, such as "shift".
-class KeyCombo {
-  KeyCombo(
+class _KeyCombo {
+  _KeyCombo(
     this.key, {
     this.isShiftPressed = false,
     this.physicalKey,
