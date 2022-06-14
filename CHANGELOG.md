@@ -1,3 +1,7 @@
+## 0.0.3 - Add key combos (June, 2022)
+
+* CMD/CTL + A 
+
 ## 0.0.2 - Add key combos (June, 2022)
 
 * CMD/CTL + C

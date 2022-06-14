@@ -151,6 +151,22 @@ extension KeyboardInput on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> pressCmdA() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCtlA() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await pumpAndSettle();
+  }
+
   Future<void> pressLeftArrow() async {
     await sendKeyEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
     await pumpAndSettle();
