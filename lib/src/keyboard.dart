@@ -103,6 +103,54 @@ extension KeyboardInput on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> pressCmdC() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCtlC() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCmdX() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCtlX() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCmdV() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCtlV() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await pumpAndSettle();
+  }
+
   Future<void> pressLeftArrow() async {
     await sendKeyEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
     await pumpAndSettle();
