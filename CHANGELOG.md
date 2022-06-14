@@ -1,3 +1,16 @@
+## 0.0.4 - Add key combos (June, 2022)
+
+* ALT + LEFT ARROW
+* CTL + LEFT ARROW
+* SHIFT + CTL + LEFT ARROW
+* CMD + LEFT ARROW
+* SHIFT + CMD + LEFT ARROW
+* ALT + RIGHT ARROW
+* CTL + RIGHT ARROW
+* SHIFT + CTL + RIGHT ARROW
+* CMD + RIGHT ARROW
+* SHIFT + CMD + RIGHT ARROW
+
 ## 0.0.3 - Add key combos (June, 2022)
 
 * CMD/CTL + A 
