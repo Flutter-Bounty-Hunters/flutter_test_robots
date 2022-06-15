@@ -1,3 +1,7 @@
+## 0.0.7 - Add key combos (June, 2022)
+
+* CTL + E
+
 ## 0.0.6 - Add key combos (June, 2022)
 
 * CMD + BACKSPACE
