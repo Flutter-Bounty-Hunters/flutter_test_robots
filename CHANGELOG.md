@@ -1,3 +1,7 @@
+## 0.0.9 - Fixed a bug (June, 2022)
+
+* Fixed CTL + BACKSPACE, previous implementation was pressing CMD + CTL
+
 ## 0.0.8 - Add key combos (June, 2022)
 
 * CTL + BACKSPACE

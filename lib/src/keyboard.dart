@@ -115,10 +115,10 @@ extension KeyboardInput on WidgetTester {
   }
 
   Future<void> pressCtlBackspace() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: 'macos');
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
     await pumpAndSettle();
   }
 
