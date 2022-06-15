@@ -1,3 +1,7 @@
+## 0.0.6 - Add key combos (June, 2022)
+
+* CMD + BACKSPACE
+
 ## 0.0.5 - Add key combos (June, 2022)
 
 * SHIFT + UP ARROW
