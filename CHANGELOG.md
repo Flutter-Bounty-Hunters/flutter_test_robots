@@ -1,3 +1,10 @@
+## 0.0.5 - Add key combos (June, 2022)
+
+* SHIFT + UP ARROW
+* SHIFT + CMD + UP ARROW
+* SHIFT + DOWN ARROW
+* SHIFT + CMD + DOWN ARROW
+
 ## 0.0.4 - Add key combos (June, 2022)
 
 * ALT + LEFT ARROW

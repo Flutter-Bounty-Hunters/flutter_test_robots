@@ -306,6 +306,14 @@ extension KeyboardInput on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> pressShiftUpArrow() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await pumpAndSettle();
+  }
+
   Future<void> pressCmdUpArrow() async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
     await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
@@ -314,8 +322,26 @@ extension KeyboardInput on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> pressShiftCmdUpArrow() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await pumpAndSettle();
+  }
+
   Future<void> pressDownArrow() async {
     await sendKeyEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressShiftDownArrow() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
     await pumpAndSettle();
   }
 
@@ -324,6 +350,16 @@ extension KeyboardInput on WidgetTester {
     await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
     await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressShiftCmdDownArrow() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
     await pumpAndSettle();
   }
 
