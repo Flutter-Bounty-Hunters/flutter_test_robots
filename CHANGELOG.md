@@ -1,3 +1,8 @@
+## 0.0.8 - Add key combos (June, 2022)
+
+* CTL + BACKSPACE
+* ALT + BACKSPACE
+
 ## 0.0.7 - Add key combos (June, 2022)
 
 * CTL + E

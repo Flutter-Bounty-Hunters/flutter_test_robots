@@ -106,6 +106,22 @@ extension KeyboardInput on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> pressAltBackspace() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCtlBackspace() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await pumpAndSettle();
+  }
+
   Future<void> pressDelete() async {
     await sendKeyEvent(LogicalKeyboardKey.delete, platform: 'macos');
     await pumpAndSettle();
