@@ -1,3 +1,8 @@
+## 0.0.10 - Add HOME and END (June, 2022)
+
+* HOME
+* END
+
 ## 0.0.9 - Fixed a bug (June, 2022)
 
 * Fixed CTL + BACKSPACE, previous implementation was pressing CMD + CTL
