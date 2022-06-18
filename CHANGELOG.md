@@ -1,3 +1,8 @@
+## 0.0.15 - Add key combos (June, 2022)
+
+* ALT + UP ARROW
+* ALT + DOWN ARROW
+
 ## 0.0.14 - Changed simulated clipboard initialization (June, 2022)
 
 * Changed `ClipboardInteractions` > `simulateClipboard()` to clear the clipboard content, if a clipboard simulation is already active. This provides a consistent initial state across multiple tests.

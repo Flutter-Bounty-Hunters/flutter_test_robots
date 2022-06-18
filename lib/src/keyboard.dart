@@ -376,6 +376,14 @@ extension KeyboardInput on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> pressAltUpArrow() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await pumpAndSettle();
+  }
+
   Future<void> pressDownArrow() async {
     await sendKeyEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
     await pumpAndSettle();
@@ -404,6 +412,14 @@ extension KeyboardInput on WidgetTester {
     await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressAltDownArrow() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
     await pumpAndSettle();
   }
 
