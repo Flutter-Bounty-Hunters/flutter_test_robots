@@ -9,12 +9,17 @@ extension ClipboardInteractions on WidgetTester {
   /// Simulates clipboard access for widget tests, which can't
   /// access a real platform keyboard.
   ///
+  /// If this method is called during an existing simulation, the
+  /// simulated clipboard content is cleared, so that tests can
+  /// rely on a predictable state after calling this method.
+  ///
   /// You should call this method before your source code attempts
   /// to send content to the [Clipboard]. After your source code
   /// sends content using [Clipboard], you can verify that content
   /// by retrieving it with [getSimulatedClipboardContent].
   void simulateClipboard() {
     if (_simulatedClipboard != null) {
+      _simulatedClipboard!.clipboardText = null;
       return;
     }
 

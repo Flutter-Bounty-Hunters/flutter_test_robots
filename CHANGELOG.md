@@ -1,3 +1,7 @@
+## 0.0.14 - Changed simulated clipboard initialization (June, 2022)
+
+* Changed `ClipboardInteractions` > `simulateClipboard()` to clear the clipboard content, if a clipboard simulation is already active. This provides a consistent initial state across multiple tests.
+
 ## 0.0.13 - Fixed simulated clipboard initialization (June, 2022)
 
 * Bugfix - `ClipboardInteractions` previously didn't `init()` the simulation when requested. Now it does.
