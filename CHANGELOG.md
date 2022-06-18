@@ -1,3 +1,7 @@
+## 0.0.11 - Added SimulatedClipboard (June, 2022)
+
+* Added SimulatedClipboard and WidgetTester extensions to easily verify expected Clipboard interactions.
+
 ## 0.0.10 - Add HOME and END (June, 2022)
 
 * HOME
