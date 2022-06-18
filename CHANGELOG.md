@@ -1,3 +1,7 @@
+## 0.0.13 - Fixed simulated clipboard initialization (June, 2022)
+
+* Bugfix - `ClipboardInteractions` previously didn't `init()` the simulation when requested. Now it does.
+
 ## 0.0.12 - Changed simulated clipboard API (June, 2022)
 
 * BREAKING - Changed `ClipboardInteractions` extensions to return clipboard text synchronously.

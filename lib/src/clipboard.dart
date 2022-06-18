@@ -14,7 +14,11 @@ extension ClipboardInteractions on WidgetTester {
   /// sends content using [Clipboard], you can verify that content
   /// by retrieving it with [getSimulatedClipboardContent].
   void simulateClipboard() {
-    _simulatedClipboard ??= SimulatedClipboard(this);
+    if (_simulatedClipboard != null) {
+      return;
+    }
+
+    _simulatedClipboard = SimulatedClipboard(this)..init();
   }
 
   /// Makes the given [content] available from the [Clipboard]
