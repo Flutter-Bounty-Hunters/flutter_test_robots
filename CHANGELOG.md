@@ -1,3 +1,7 @@
+## 0.0.12 - Changed simulated clipboard API (June, 2022)
+
+* BREAKING - Changed `ClipboardInteractions` extensions to return clipboard text synchronously.
+
 ## 0.0.11 - Added SimulatedClipboard (June, 2022)
 
 * Added SimulatedClipboard and WidgetTester extensions to easily verify expected Clipboard interactions.

@@ -31,10 +31,12 @@ extension ClipboardInteractions on WidgetTester {
   /// To use this method to verify that your source code sent expected
   /// content to the [Clipboard], you must call [simulateClipboard]
   /// before your source code tries to send content to the [Clipboard].
-  Future<String?> getSimulatedClipboardContent() async {
-    _simulatedClipboard ??= SimulatedClipboard(this);
+  String? getSimulatedClipboardContent() {
+    if (_simulatedClipboard == null) {
+      return null;
+    }
 
-    return (await Clipboard.getData("text/plain"))?.text;
+    return _simulatedClipboard!.clipboardText;
   }
 
   /// Clears any content that was stored within a simulated clipboard
