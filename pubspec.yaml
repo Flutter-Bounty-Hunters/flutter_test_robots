@@ -1,6 +1,6 @@
 name: flutter_test_robots
 description: Flutter test tools and extensions to simulate human-computer interactions
-version: 0.0.15
+version: 0.0.16
 homepage: https://github.com/flutter-bounty-hunters/flutter_test_robots
 
 environment:

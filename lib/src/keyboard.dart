@@ -127,6 +127,22 @@ extension KeyboardInput on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> pressCmdB() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCtlB() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await pumpAndSettle();
+  }
+
   Future<void> pressCmdC() async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
     await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: 'macos');
@@ -139,6 +155,22 @@ extension KeyboardInput on WidgetTester {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
     await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: 'macos');
     await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCmdI() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await pumpAndSettle();
+  }
+
+  Future<void> pressCtlI() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: 'macos');
+    await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: 'macos');
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
     await pumpAndSettle();
   }

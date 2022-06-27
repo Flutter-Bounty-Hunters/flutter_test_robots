@@ -1,3 +1,8 @@
+## 0.0.16 - Add key combos (June, 2022)
+
+* CMD + B
+* CMD + I
+
 ## 0.0.15 - Add key combos (June, 2022)
 
 * ALT + UP ARROW
