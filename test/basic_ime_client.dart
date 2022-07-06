@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'test_logging.dart';
 
+/// A bare-bones implementation of a [DeltaTextInputClient] to help test IME simulation.
 class BareBonesTextFieldWithInputClient extends StatefulWidget {
   const BareBonesTextFieldWithInputClient({
     Key? key,
