@@ -81,7 +81,7 @@ class ImeSimulator {
 
     // Pretend that we're the host platform and send our IME deltas to the app, as
     // if the user typed them.
-    imeClient.updateEditingValueWithDeltas(deltas);
+    await _sendDeltasThroughChannel(deltas);
 
     // Let the app handle the deltas, however long it takes.
     await _tester.pumpAndSettle();
@@ -108,7 +108,7 @@ class ImeSimulator {
     //
     // If the selection is collapsed, we backspace a single character. If the selection is expanded,
     // we delete the selection.
-    imeClient.updateEditingValueWithDeltas([
+    await _sendDeltasThroughChannel([
       TextEditingDeltaDeletion(
         oldText: imeClient.currentTextEditingValue!.text,
         deletedRange: imeClient.currentTextEditingValue!.selection.isCollapsed
@@ -126,5 +126,90 @@ class ImeSimulator {
 
     // Let the app handle the deltas, however long it takes.
     await _tester.pumpAndSettle();
+  }
+
+  Future<void> _sendDeltasThroughChannel(List<TextEditingDelta> deltas) async {
+    final ByteData? messageBytes = const JSONMessageCodec().encodeMessage(<String, dynamic>{
+      'args': <dynamic>[
+        1,
+        {
+          "deltas": [
+            for (final delta in deltas) //
+              _deltaToJson(delta, delta.oldText),
+          ],
+        },
+      ],
+      'method': 'TextInputClient.updateEditingStateWithDeltas',
+    });
+
+    await ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/textinput',
+      messageBytes,
+      (ByteData? _) {},
+    );
+  }
+
+  Map<String, dynamic> _deltaToJson(TextEditingDelta delta, String oldText) {
+    if (delta is TextEditingDeltaInsertion) {
+      return {
+        "oldText": oldText,
+        "deltaStart": delta.insertionOffset,
+        "deltaEnd": delta.insertionOffset,
+        "deltaText": delta.textInserted,
+        "selectionBase": delta.selection.baseOffset,
+        "selectionExtent": delta.selection.extentOffset,
+        "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
+        "selectionIsDirection": false,
+        "composingBase": -1,
+        "composingExtent": -1,
+      };
+    } else if (delta is TextEditingDeltaReplacement) {
+      return {
+        "oldText": oldText,
+        "deltaStart": delta.replacedRange.start,
+        "deltaEnd": delta.replacedRange.end,
+        "deltaText": delta.replacementText,
+        "selectionBase": delta.selection.baseOffset,
+        "selectionExtent": delta.selection.extentOffset,
+        "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
+        "selectionIsDirection": false,
+        "composingBase": -1,
+        "composingExtent": -1,
+      };
+    } else if (delta is TextEditingDeltaDeletion) {
+      return {
+        "oldText": oldText,
+        "deltaStart": delta.deletedRange.start,
+        "deltaEnd": delta.deletedRange.end,
+        "deltaText": "",
+        "selectionBase": delta.selection.baseOffset,
+        "selectionExtent": delta.selection.extentOffset,
+        "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
+        "selectionIsDirection": false,
+        "composingBase": -1,
+        "composingExtent": -1,
+      };
+    } else if (delta is TextEditingDeltaNonTextUpdate) {
+      return {
+        "oldText": oldText,
+        "selectionBase": delta.selection.baseOffset,
+        "selectionExtent": delta.selection.extentOffset,
+        "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
+        "selectionIsDirection": delta.selection.isDirectional,
+        "composingBase": delta.composing.start,
+        "composingExtent": delta.composing.end,
+      };
+    }
+
+    throw Exception("Invalid delta: $delta");
+  }
+
+  String _fromTextAffinity(TextAffinity affinity) {
+    switch (affinity) {
+      case TextAffinity.downstream:
+        return 'TextAffinity.downstream';
+      case TextAffinity.upstream:
+        return 'TextAffinity.upstream';
+    }
   }
 }

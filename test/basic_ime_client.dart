@@ -37,6 +37,7 @@ class _BareBonesTextFieldWithInputClientState extends State<BareBonesTextFieldWi
 
   @override
   void dispose() {
+    _textInputConnection?.close();
     _focusNode.dispose();
     super.dispose();
   }
@@ -64,7 +65,11 @@ class _BareBonesTextFieldWithInputClientState extends State<BareBonesTextFieldWi
       // ignore: prefer_conditional_assignment
       if (_textInputConnection == null) {
         setState(() {
-          _textInputConnection = TextInput.attach(this, const TextInputConfiguration());
+          _textInputConnection = TextInput.attach(
+              this,
+              const TextInputConfiguration(
+                enableDeltaModel: true,
+              ));
           _textInputConnection!
             ..show()
             ..setEditingState(currentTextEditingValue!);

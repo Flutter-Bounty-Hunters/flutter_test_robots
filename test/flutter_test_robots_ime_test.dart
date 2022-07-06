@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_test_robots/src/input_method_engine.dart';
 
@@ -6,6 +7,14 @@ import 'basic_ime_client.dart';
 
 void main() {
   group("IME simulator", () {
+    tearDown(() {
+      // This line seems to be required when running multiple tests because without
+      // it, the previous `TextInputConnection` ID remains across tests and causes
+      // problems within Flutter. This is true even when explicitly closing the
+      // connection in a widget's `dispose()` method.
+      TextInputConnection.debugResetId();
+    });
+
     testWidgets("types characters", (tester) async {
       await _pumpScaffold(tester);
       await tester.tap(find.byType(BareBonesTextFieldWithInputClient));
