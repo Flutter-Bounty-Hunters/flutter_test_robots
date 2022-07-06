@@ -129,12 +129,6 @@ class ImeSimulator {
   }
 
   Future<void> _sendDeltasThroughChannel(List<TextEditingDelta> deltas) async {
-    // TODO(Flutter): use constants instead of inline strings for message names
-    // TODO(Flutter): provide a fromJSON() for deltas
-    // TODO(Flutter): delta composing region uses `start` and `end` terminology, but the map key is `composingBase` and
-    //                `composingExtent`. These are different concepts.
-    // TODO(Flutter): bad messages or values fail silently. I have to trace through the code to figure out what's wrong
-    //                with my test input.
     final ByteData? messageBytes = const JSONMessageCodec().encodeMessage(<String, dynamic>{
       'args': <dynamic>[
         1,
