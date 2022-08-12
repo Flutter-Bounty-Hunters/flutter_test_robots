@@ -90,9 +90,13 @@ class ImeSimulator {
       ),
     ];
 
+    imeClient.updateEditingValueWithDeltas(deltas);
+
+    // TODO: Send messages through the standard channel when it works. For some reason, only the first test delivers
+    //       messages across the channel.
     // Pretend that we're the host platform and send our IME deltas to the app, as
     // if the user typed them.
-    await _sendDeltasThroughChannel(deltas);
+    // await _sendDeltasThroughChannel(deltas);
 
     // Let the app handle the deltas, however long it takes.
     await _tester.pumpAndSettle();
@@ -115,11 +119,7 @@ class ImeSimulator {
       return;
     }
 
-    // Send a delta for a backspace behavior.
-    //
-    // If the selection is collapsed, we backspace a single character. If the selection is expanded,
-    // we delete the selection.
-    await _sendDeltasThroughChannel([
+    final deltas = [
       TextEditingDeltaDeletion(
         oldText: imeClient.currentTextEditingValue!.text,
         deletedRange: imeClient.currentTextEditingValue!.selection.isCollapsed
@@ -133,12 +133,23 @@ class ImeSimulator {
             : TextSelection.collapsed(offset: imeClient.currentTextEditingValue!.selection.start),
         composing: TextRange.empty,
       ),
-    ]);
+    ];
+
+    imeClient.updateEditingValueWithDeltas(deltas);
+
+    // TODO: Send messages through the standard channel when it works. For some reason, only the first test delivers
+    //       messages across the channel.
+    // Send a delta for a backspace behavior.
+    //
+    // If the selection is collapsed, we backspace a single character. If the selection is expanded,
+    // we delete the selection.
+    // await _sendDeltasThroughChannel(deltas);
 
     // Let the app handle the deltas, however long it takes.
     await _tester.pumpAndSettle();
   }
 
+  // ignore: unused_element
   Future<void> _sendDeltasThroughChannel(List<TextEditingDelta> deltas) async {
     final ByteData? messageBytes = const JSONMessageCodec().encodeMessage(<String, dynamic>{
       'args': <dynamic>[
