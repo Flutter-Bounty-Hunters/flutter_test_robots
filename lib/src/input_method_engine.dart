@@ -38,8 +38,19 @@ class ImeSimulator {
   ///
   /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
   /// which is the standard behavior when typing new characters with an existing selection.
-  Future<void> typeText(Finder imeClientFinder, String textToType) async {
-    final imeClient = (imeClientFinder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+  Future<void> typeText(
+    String textToType, {
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    assert(finder != null && getter == null || finder == null && getter != null);
+
+    late final DeltaTextInputClient imeClient;
+    if (finder != null) {
+      imeClient = (finder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+    } else {
+      imeClient = getter!();
+    }
     assert(imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to type into.");
     assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1,
         "The target widget doesn't have a text selection to type into.");
@@ -213,3 +224,5 @@ class ImeSimulator {
     }
   }
 }
+
+typedef GetDeltaTextInputClient = DeltaTextInputClient Function();

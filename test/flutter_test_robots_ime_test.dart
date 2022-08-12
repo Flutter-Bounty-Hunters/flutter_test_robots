@@ -19,7 +19,7 @@ void main() {
       await _pumpScaffold(tester);
       await tester.tap(find.byType(BareBonesTextFieldWithInputClient));
 
-      await tester.ime.typeText(find.byType(BareBonesTextFieldWithInputClient), "Abc💙");
+      await tester.ime.typeText("Abc💙", finder: find.byType(BareBonesTextFieldWithInputClient));
 
       expect(find.text("Abc💙"), findsOneWidget);
     });
@@ -34,7 +34,7 @@ void main() {
       );
       await tester.tap(find.byType(BareBonesTextFieldWithInputClient));
 
-      await tester.ime.typeText(find.byType(BareBonesTextFieldWithInputClient), "d");
+      await tester.ime.typeText("d", finder: find.byType(BareBonesTextFieldWithInputClient));
 
       expect(find.text("Ad💙"), findsOneWidget);
     });
