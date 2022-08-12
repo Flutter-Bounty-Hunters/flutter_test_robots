@@ -49,12 +49,12 @@ void main() {
       );
       await tester.tap(find.byType(BareBonesTextFieldWithInputClient));
 
-      await tester.ime.backspace(find.byType(BareBonesTextFieldWithInputClient));
-      await tester.ime.backspace(find.byType(BareBonesTextFieldWithInputClient));
+      await tester.ime.backspace(finder: find.byType(BareBonesTextFieldWithInputClient));
+      await tester.ime.backspace(finder: find.byType(BareBonesTextFieldWithInputClient));
 
       // Run a 3rd backspace, which shouldn't have any effect. This ensures that our
       // simulator doesn't blow up when backspacing at the beginning of text.
-      await tester.ime.backspace(find.byType(BareBonesTextFieldWithInputClient));
+      await tester.ime.backspace(finder: find.byType(BareBonesTextFieldWithInputClient));
 
       expect(find.text("c💙"), findsOneWidget);
     });
@@ -72,7 +72,7 @@ void main() {
       );
       await tester.tap(find.byType(BareBonesTextFieldWithInputClient));
 
-      await tester.ime.backspace(find.byType(BareBonesTextFieldWithInputClient));
+      await tester.ime.backspace(finder: find.byType(BareBonesTextFieldWithInputClient));
 
       expect(find.text("A💙"), findsOneWidget);
     });

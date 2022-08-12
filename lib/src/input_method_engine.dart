@@ -106,8 +106,18 @@ class ImeSimulator {
   ///
   /// If the selection is collapsed, the upstream character is deleted. If the selection is expanded, then
   /// the selection is deleted.
-  Future<void> backspace(Finder imeClientFinder) async {
-    final imeClient = (imeClientFinder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+  Future<void> backspace({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    assert(finder != null && getter == null || finder == null && getter != null);
+
+    late final DeltaTextInputClient imeClient;
+    if (finder != null) {
+      imeClient = (finder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+    } else {
+      imeClient = getter!();
+    }
     assert(
         imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to backspace in.");
     assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1,
