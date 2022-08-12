@@ -7,3 +7,42 @@
 
 ---
 
+## Easy keyboard shortcuts
+`flutter_test_robots` adds methods to `WidgetTester` for many common keyboard shortcuts.
+
+```dart
+void main() {
+  testWidgets("easy shortcuts", (tester) async {
+    await tester.pressEnter();
+
+    await tester.pressShiftEnter();
+    
+    await tester.pressCmdAltLeftArrow();
+  });
+}
+```
+
+## Simulate hardware keyboard text input
+`flutter_test_robots` presses key combos for every character in a given string.
+
+```dart
+void main() {
+  testWidgets("type with a hardware keyboard", (tester) async {
+    // Simulate every key press that's needed to type "Hello, world!".
+    await tester.typeKeyboardText("Hello, world!");
+  });
+}
+```
+
+## Simulate IME text input
+`flutter_test_robots` breaks strings into text editing deltas and sends the deltas through the
+standard `DeltaTextInputClient` API.
+
+```dart
+void main() {
+  testWidgets("type with the IME", (tester) async {
+    // Simulate every IME delta needed to type "Hello, world!".
+    await tester.ime.typeText("Hello, world!");
+  });
+}
+```

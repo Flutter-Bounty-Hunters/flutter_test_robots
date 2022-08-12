@@ -38,8 +38,19 @@ class ImeSimulator {
   ///
   /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
   /// which is the standard behavior when typing new characters with an existing selection.
-  Future<void> typeText(Finder imeClientFinder, String textToType) async {
-    final imeClient = (imeClientFinder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+  Future<void> typeText(
+    String textToType, {
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    assert(finder != null && getter == null || finder == null && getter != null);
+
+    late final DeltaTextInputClient imeClient;
+    if (finder != null) {
+      imeClient = (finder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+    } else {
+      imeClient = getter!();
+    }
     assert(imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to type into.");
     assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1,
         "The target widget doesn't have a text selection to type into.");
@@ -79,9 +90,13 @@ class ImeSimulator {
       ),
     ];
 
+    imeClient.updateEditingValueWithDeltas(deltas);
+
+    // TODO: Send messages through the standard channel when it works. For some reason, only the first test delivers
+    //       messages across the channel.
     // Pretend that we're the host platform and send our IME deltas to the app, as
     // if the user typed them.
-    await _sendDeltasThroughChannel(deltas);
+    // await _sendDeltasThroughChannel(deltas);
 
     // Let the app handle the deltas, however long it takes.
     await _tester.pumpAndSettle();
@@ -91,8 +106,18 @@ class ImeSimulator {
   ///
   /// If the selection is collapsed, the upstream character is deleted. If the selection is expanded, then
   /// the selection is deleted.
-  Future<void> backspace(Finder imeClientFinder) async {
-    final imeClient = (imeClientFinder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+  Future<void> backspace({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    assert(finder != null && getter == null || finder == null && getter != null);
+
+    late final DeltaTextInputClient imeClient;
+    if (finder != null) {
+      imeClient = (finder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+    } else {
+      imeClient = getter!();
+    }
     assert(
         imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to backspace in.");
     assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1,
@@ -104,11 +129,7 @@ class ImeSimulator {
       return;
     }
 
-    // Send a delta for a backspace behavior.
-    //
-    // If the selection is collapsed, we backspace a single character. If the selection is expanded,
-    // we delete the selection.
-    await _sendDeltasThroughChannel([
+    final deltas = [
       TextEditingDeltaDeletion(
         oldText: imeClient.currentTextEditingValue!.text,
         deletedRange: imeClient.currentTextEditingValue!.selection.isCollapsed
@@ -122,12 +143,23 @@ class ImeSimulator {
             : TextSelection.collapsed(offset: imeClient.currentTextEditingValue!.selection.start),
         composing: TextRange.empty,
       ),
-    ]);
+    ];
+
+    imeClient.updateEditingValueWithDeltas(deltas);
+
+    // TODO: Send messages through the standard channel when it works. For some reason, only the first test delivers
+    //       messages across the channel.
+    // Send a delta for a backspace behavior.
+    //
+    // If the selection is collapsed, we backspace a single character. If the selection is expanded,
+    // we delete the selection.
+    // await _sendDeltasThroughChannel(deltas);
 
     // Let the app handle the deltas, however long it takes.
     await _tester.pumpAndSettle();
   }
 
+  // ignore: unused_element
   Future<void> _sendDeltasThroughChannel(List<TextEditingDelta> deltas) async {
     final ByteData? messageBytes = const JSONMessageCodec().encodeMessage(<String, dynamic>{
       'args': <dynamic>[
@@ -213,3 +245,5 @@ class ImeSimulator {
     }
   }
 }
+
+typedef GetDeltaTextInputClient = DeltaTextInputClient Function();
