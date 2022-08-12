@@ -1,3 +1,5 @@
+## 0.0.17 - Added simulated IME text input and backspace (August, 2022)
+
 ## 0.0.16 - Add key combos (June, 2022)
 
 * CMD + B
