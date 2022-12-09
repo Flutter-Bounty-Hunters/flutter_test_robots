@@ -33,7 +33,7 @@ class ImeSimulator {
 
   /// Simulates the user typing [textToType], character by character.
   ///
-  /// The given [imeClientFinder] must find a [StatefulWidget] whose [State] implements
+  /// The given [finder] must find a [StatefulWidget] whose [State] implements
   /// [DeltaTextInputClient].
   ///
   /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
@@ -43,14 +43,8 @@ class ImeSimulator {
     Finder? finder,
     GetDeltaTextInputClient? getter,
   }) async {
-    assert(finder != null && getter == null || finder == null && getter != null);
+    final imeClient = _findImeClient(finder: finder, getter: getter);
 
-    late final DeltaTextInputClient imeClient;
-    if (finder != null) {
-      imeClient = (finder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
-    } else {
-      imeClient = getter!();
-    }
     assert(imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to type into.");
     assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1,
         "The target widget doesn't have a text selection to type into.");
@@ -110,14 +104,8 @@ class ImeSimulator {
     Finder? finder,
     GetDeltaTextInputClient? getter,
   }) async {
-    assert(finder != null && getter == null || finder == null && getter != null);
+    final imeClient = _findImeClient(finder: finder, getter: getter);
 
-    late final DeltaTextInputClient imeClient;
-    if (finder != null) {
-      imeClient = (finder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
-    } else {
-      imeClient = getter!();
-    }
     assert(
         imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to backspace in.");
     assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1,
@@ -157,6 +145,36 @@ class ImeSimulator {
 
     // Let the app handle the deltas, however long it takes.
     await _tester.pumpAndSettle();
+  }
+
+  /// Simulates dispatching arbitrary deltas.
+  ///
+  /// The given [finder] must find a [StatefulWidget] whose [State] implements
+  /// [DeltaTextInputClient].
+  Future<void> sendDeltas(
+    List<TextEditingDelta> deltas, {
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    final imeClient = _findImeClient(finder: finder, getter: getter);
+
+    imeClient.updateEditingValueWithDeltas(deltas);
+
+    // Let the app handle the deltas.
+    await _tester.pumpAndSettle();
+  }
+
+  DeltaTextInputClient _findImeClient({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) {
+    assert(finder != null && getter == null || finder == null && getter != null);
+
+    if (finder != null) {
+      return (finder.evaluate().single as StatefulElement).state as DeltaTextInputClient;
+    } else {
+      return getter!();
+    }
   }
 
   // ignore: unused_element

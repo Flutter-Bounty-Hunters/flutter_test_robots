@@ -76,6 +76,34 @@ void main() {
 
       expect(find.text("A💙"), findsOneWidget);
     });
+
+    testWidgets("dispatches arbitrary deltas", (tester) async {
+      await _pumpScaffold(
+        tester,
+        const TextEditingValue(
+          text: "Abc",
+          selection: TextSelection(baseOffset: 1, extentOffset: 3),
+        ),
+      );
+
+      await tester.tap(find.byType(BareBonesTextFieldWithInputClient));
+
+      // Dispatch a delta to insert the letter 'd' at the end of the text.
+      await tester.ime.sendDeltas(
+        const [
+          TextEditingDeltaInsertion(
+            oldText: "Abc",
+            textInserted: "d",
+            insertionOffset: 3,
+            selection: TextSelection.collapsed(offset: 3),
+            composing: TextSelection.collapsed(offset: 3),
+          )
+        ],
+        finder: find.byType(BareBonesTextFieldWithInputClient),
+      );
+
+      expect(find.text("Abcd"), findsOneWidget);
+    });
   });
 }
 
