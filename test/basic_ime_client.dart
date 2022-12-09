@@ -17,7 +17,7 @@ class BareBonesTextFieldWithInputClient extends StatefulWidget {
 }
 
 class _BareBonesTextFieldWithInputClientState extends State<BareBonesTextFieldWithInputClient>
-    implements DeltaTextInputClient {
+    with DeltaTextInputClient, TextInputClient {
   late FocusNode _focusNode;
   TextInputConnection? _textInputConnection;
 
