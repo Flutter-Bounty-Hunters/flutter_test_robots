@@ -459,6 +459,38 @@ extension KeyboardInput on WidgetTester {
     await sendKeyEvent(LogicalKeyboardKey.escape, platform: 'macos');
     await pumpAndSettle();
   }
+
+  Future<void> pressCmdHome(WidgetTester tester) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: 'macos');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: 'macos');
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> pressCmdEnd(WidgetTester tester) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: 'macos');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: 'macos');
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> pressCtrlHome(WidgetTester tester) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: 'macos');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: 'macos');
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> pressCtrlEnd(WidgetTester tester) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: 'macos');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: 'macos');
+    await tester.pumpAndSettle();
+  }
 }
 
 /// Returns a physical keyboard key combination that expects to create the

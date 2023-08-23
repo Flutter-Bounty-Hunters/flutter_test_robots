@@ -192,7 +192,7 @@ class ImeSimulator {
       'method': 'TextInputClient.updateEditingStateWithDeltas',
     });
 
-    await ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+    await _tester.binding.defaultBinaryMessenger.handlePlatformMessage(
       'flutter/textinput',
       messageBytes,
       (ByteData? _) {},
