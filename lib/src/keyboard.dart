@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -28,18 +29,18 @@ extension KeyboardInput on WidgetTester {
       final keyCombo = _keyComboForCharacter(character);
 
       if (keyCombo.isShiftPressed) {
-        await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
+        await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
       }
 
       if (keyCombo.isShiftPressed) {
-        await sendKeyDownEvent(keyCombo.physicalKey!, platform: 'macos', character: character);
-        await sendKeyUpEvent(keyCombo.physicalKey!, platform: 'macos');
+        await sendKeyDownEvent(keyCombo.physicalKey!, platform: _keyEventPlatform, character: character);
+        await sendKeyUpEvent(keyCombo.physicalKey!, platform: _keyEventPlatform);
       } else {
-        await sendKeyEvent(keyCombo.key, platform: 'macos');
+        await sendKeyEvent(keyCombo.key, platform: _keyEventPlatform);
       }
 
       if (keyCombo.isShiftPressed) {
-        await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+        await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
       }
 
       await pump();
@@ -47,451 +48,493 @@ extension KeyboardInput on WidgetTester {
   }
 
   Future<void> pressEnter() async {
-    await sendKeyEvent(LogicalKeyboardKey.enter, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftEnter() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdEnter() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlEnter() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressNumpadEnter() async {
-    await sendKeyEvent(LogicalKeyboardKey.numpadEnter, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftNumpadEnter() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.numpadEnter, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.numpadEnter, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressTab() async {
-    await sendKeyEvent(LogicalKeyboardKey.tab, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.tab, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressBackspace() async {
-    await sendKeyEvent(LogicalKeyboardKey.backspace, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdBackspace() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressAltBackspace() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlBackspace() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressDelete() async {
-    await sendKeyEvent(LogicalKeyboardKey.delete, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.delete, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdB() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlB() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdC() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlC() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdI() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlI() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdX() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlX() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdV() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlV() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdA() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlA() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlE() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.keyE, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.keyE, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyE, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyE, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressHome() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.home, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.home, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressEnd() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.end, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.end, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressLeftArrow() async {
-    await sendKeyEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftLeftArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressAltLeftArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftAltLeftArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlLeftArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftCtlLeftArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdLeftArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftCmdLeftArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressRightArrow() async {
-    await sendKeyEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftRightArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressAltRightArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftAltRightArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCtlRightArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftCtlRightArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdRightArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftCmdRightArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressUpArrow() async {
-    await sendKeyEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftUpArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdUpArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftCmdUpArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressAltUpArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await pumpAndSettle();
+  }
+
+  Future<void> pressShiftAltUpArrow() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressDownArrow() async {
-    await sendKeyEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftDownArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdDownArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressShiftCmdDownArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressAltDownArrow() async {
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: 'macos');
-    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: 'macos');
-    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: 'macos');
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await pumpAndSettle();
+  }
+
+  Future<void> pressShiftAltDownArrow() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressEscape() async {
-    await sendKeyEvent(LogicalKeyboardKey.escape, platform: 'macos');
+    await sendKeyEvent(LogicalKeyboardKey.escape, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
 
   Future<void> pressCmdHome(WidgetTester tester) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: 'macos');
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: 'macos');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
     await tester.pumpAndSettle();
   }
 
   Future<void> pressCmdEnd(WidgetTester tester) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: 'macos');
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: 'macos');
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: 'macos');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
     await tester.pumpAndSettle();
   }
 
   Future<void> pressCtrlHome(WidgetTester tester) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: 'macos');
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: 'macos');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
     await tester.pumpAndSettle();
   }
 
   Future<void> pressCtrlEnd(WidgetTester tester) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: 'macos');
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: 'macos');
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: 'macos');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
     await tester.pumpAndSettle();
   }
 }
+
+String get _keyEventPlatform {
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      return "android";
+    case TargetPlatform.iOS:
+      return "ios";
+    case TargetPlatform.macOS:
+      return "macos";
+    case TargetPlatform.windows:
+      return "windows";
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+      return "linux";
+  }
+}
+
+/// Override for the `platform` value that's passed to every key simulation event.
+///
+/// When `null`, Flutter's `defaultTargetPlatform` determines the `platform` value
+/// that's passed to every key simulation event.
+String? keyEventPlatformOverride;
 
 /// Returns a physical keyboard key combination that expects to create the
 /// given [character].

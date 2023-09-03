@@ -96,6 +96,14 @@ class ImeSimulator {
     await _tester.pumpAndSettle();
   }
 
+  /// Simulates the user pressing the tab button on a software keyboard.
+  Future<void> tab({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    await typeText('\t');
+  }
+
   /// Simulates the user pressing the backspace button.
   ///
   /// If the selection is collapsed, the upstream character is deleted. If the selection is expanded, then
