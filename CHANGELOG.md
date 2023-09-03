@@ -1,3 +1,12 @@
+## 0.0.19
+Keyboard and IME additions (September, 2023)
+
+ * CTRL + HOME/END
+ * CMD + HOME/END
+ * SHIFT + ALT + UP/DOWN
+ * Tab button through IME (i.e., software keyboard)
+ * All keyboard event now simulate with a platform as chosen by `defaultTargetPlatform`
+
 ## 0.0.18
 Added arbitrary delta from simulated IME (December, 2022)
 
