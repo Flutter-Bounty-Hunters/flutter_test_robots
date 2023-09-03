@@ -1,5 +1,8 @@
+## 0.0.20
+Fixed a bug in keyboard key event platform overrides from version `0.0.19` (September, 2023)
+
 ## 0.0.19
-Keyboard and IME additions (September, 2023)
+(DEPRECATED) Keyboard and IME additions (September, 2023)
 
  * CTRL + HOME/END
  * CMD + HOME/END
