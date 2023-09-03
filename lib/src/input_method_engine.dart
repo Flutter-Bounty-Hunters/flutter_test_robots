@@ -97,7 +97,7 @@ class ImeSimulator {
   }
 
   /// Simulates the user pressing the tab button on a software keyboard.
-  Future<void> tab({
+  Future<void> pressTab({
     Finder? finder,
     GetDeltaTextInputClient? getter,
   }) async {
