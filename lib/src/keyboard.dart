@@ -515,6 +515,10 @@ extension KeyboardInput on WidgetTester {
 }
 
 String get _keyEventPlatform {
+  if (keyEventPlatformOverride != null) {
+    return keyEventPlatformOverride!;
+  }
+
   switch (defaultTargetPlatform) {
     case TargetPlatform.android:
       return "android";
@@ -534,6 +538,9 @@ String get _keyEventPlatform {
 ///
 /// When `null`, Flutter's `defaultTargetPlatform` determines the `platform` value
 /// that's passed to every key simulation event.
+///
+/// It is your responsibility to nullify this value when you're done with your
+/// platform overrides.
 String? keyEventPlatformOverride;
 
 /// Returns a physical keyboard key combination that expects to create the
