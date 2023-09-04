@@ -51,6 +51,34 @@ extension KeyboardInput on WidgetTester {
     }
   }
 
+  /// Runs [sendKeyEvent], using the current [defaultTargetPlatform] as the key simulators `platform` value.
+  ///
+  /// {@template flutter_key_simulation_override}
+  /// This method was created because developers often use convenience methods in this package,
+  /// along with Flutter's standard simulation methods. But, the convenience methods in this package
+  /// simulate a key press `platform` based on the current [defaultTargetPlatform], whereas Flutter's
+  /// standard simulation methods always default to "android". Using mismatched platforms across
+  /// key simulations leads to unexpected results. By always using methods in this package, instead of
+  /// standard Flutter methods, the simulated platform is guaranteed to match across calls, and also
+  /// match the platform that's simulated within the surrounding test, i.e., [defaultTargetPlatform].
+  /// @{endtemplate}
+  Future<void> pressKey(LogicalKeyboardKey key) => sendKeyEvent(key, platform: _keyEventPlatform);
+
+  /// Runs [simulateKeyDownEvent], using the current [defaultTargetPlatform] as the key simulators `platform` value.
+  ///
+  /// {@macro flutter_key_simulation_override}
+  Future<void> pressKeyDown(LogicalKeyboardKey key) => simulateKeyDownEvent(key, platform: _keyEventPlatform);
+
+  /// Runs [simulateKeyUpEvent], using the current [defaultTargetPlatform] as the key simulators `platform` value.
+  ///
+  /// {@macro flutter_key_simulation_override}
+  Future<void> releaseKeyUp(LogicalKeyboardKey key) => simulateKeyUpEvent(key, platform: _keyEventPlatform);
+
+  /// Runs [simulateKeyRepeatEvent], using the current [defaultTargetPlatform] as the key simulators `platform` value.
+  ///
+  /// {@macro flutter_key_simulation_override}
+  Future<void> repeatKey(LogicalKeyboardKey key) => simulateKeyRepeatEvent(key, platform: _keyEventPlatform);
+
   Future<void> pressEnter() async {
     await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await pumpAndSettle();
