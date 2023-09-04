@@ -24,23 +24,27 @@ extension KeyboardInput on WidgetTester {
   /// `TextField` only responds to the IME, so this method would have no
   /// effect on a `TextField`.
   Future<void> typeKeyboardText(String plainText) async {
+    // Avoid generating characters with an "ios" platform due to Flutter bug.
+    // TODO: Remove special platform selection when Flutter issue is solved (https://github.com/flutter/flutter/issues/133956)
+    final platform = _keyEventPlatform != "ios" ? _keyEventPlatform : "android";
+
     for (int i = 0; i < plainText.length; i += 1) {
       final character = plainText[i];
       final keyCombo = _keyComboForCharacter(character);
 
       if (keyCombo.isShiftPressed) {
-        await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+        await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: platform);
       }
 
       if (keyCombo.isShiftPressed) {
-        await sendKeyDownEvent(keyCombo.physicalKey!, platform: _keyEventPlatform, character: character);
-        await sendKeyUpEvent(keyCombo.physicalKey!, platform: _keyEventPlatform);
+        await sendKeyDownEvent(keyCombo.physicalKey!, platform: platform, character: character);
+        await sendKeyUpEvent(keyCombo.physicalKey!, platform: platform);
       } else {
-        await sendKeyEvent(keyCombo.key, platform: _keyEventPlatform);
+        await sendKeyEvent(keyCombo.key, platform: platform);
       }
 
       if (keyCombo.isShiftPressed) {
-        await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+        await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: platform);
       }
 
       await pump();
