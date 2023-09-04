@@ -1,5 +1,13 @@
+## 0.0.21
+Additions and adjustments to work around Flutter's test key simulation (September, 2023)
+
+ * `pressKey`, `pressKeyDown`, `releaseKeyUp`, `repeatKey` wraps standard Flutter key simulations
+    to prevent platform mismatches across key presses.
+ * Don't use "ios" platform when simulating keyboard content typing because Flutter has a
+    bug with generating key events for characters, specifically when simulating `platform` "ios".
+
 ## 0.0.20
-Fixed a bug in keyboard key event platform overrides from version `0.0.19` (September, 2023)
+(DEPRECATED) Fixed a bug in keyboard key event platform overrides from version `0.0.19` (September, 2023)
 
 ## 0.0.19
 (DEPRECATED) Keyboard and IME additions (September, 2023)
