@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test_robots/src/input_method_engine.dart';
 
 /// Simulates keyboard input in your Flutter app.
 ///
@@ -81,7 +82,40 @@ extension KeyboardInput on WidgetTester {
 
   Future<void> pressEnter() async {
     await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
-    await pumpAndSettle();
+  }
+
+  /// Simulates the user pressing ENTER on a widget that could be attached to the IME.
+  /// 
+  /// If the ENTER key isn't handled, generates a "\n" insertion followed by a TextInputAction.newline.
+  ///
+  /// The given [finder] must find a [StatefulWidget] whose [State] implements
+  /// [DeltaTextInputClient].
+  ///
+  /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
+  /// which is the standard behavior when typing new characters with an existing selection.
+  Future<void> pressEnterWithIme({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    final handled = await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    if (handled) {
+      // The textfield handled the key event.
+      // It won't bubble up to the OS to generate text deltas or input actions.
+      await pumpAndSettle();
+      return;
+    }
+
+    if (!testTextInput.hasAnyClients) {
+      // There isn't any IME connections.
+      return;
+    }
+
+    // The ENTER key event wasn't handled.
+    // The OS generates both a "\n" insertion and a new line action.    
+    await ime.typeText('\n', finder: finder, getter: getter);
+    await pump();
+    await testTextInput.receiveAction(TextInputAction.newline);
+    await pump();
   }
 
   Future<void> pressShiftEnter() async {
@@ -111,6 +145,40 @@ extension KeyboardInput on WidgetTester {
   Future<void> pressNumpadEnter() async {
     await sendKeyEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
     await pumpAndSettle();
+  }
+
+  /// Simulates the user pressing NUMPAD ENTER on a widget that could be attached to the IME.
+  /// 
+  /// If the NUMPAD ENTER key isn't handled, generates a "\n" insertion followed by a TextInputAction.newline.
+  ///
+  /// The given [finder] must find a [StatefulWidget] whose [State] implements
+  /// [DeltaTextInputClient].
+  ///
+  /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
+  /// which is the standard behavior when typing new characters with an existing selection.
+  Future<void> pressNumpadEnterWithIme({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    final handled = await sendKeyEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
+    if (handled) {
+      // The textfield handled the key event.
+      // It won't bubble up to the OS to generate text deltas or input actions.
+      await pumpAndSettle();
+      return;
+    }
+
+    if (!testTextInput.hasAnyClients) {
+      // There isn't any IME connections.
+      return;
+    }
+
+    // The NUMPAD ENTER key event wasn't handled.
+    // The OS generates both a "\n" insertion and a new line action.    
+    await ime.typeText('\n', finder: finder, getter: getter);
+    await pump();
+    await testTextInput.receiveAction(TextInputAction.newline);
+    await pump();
   }
 
   Future<void> pressShiftNumpadEnter() async {
