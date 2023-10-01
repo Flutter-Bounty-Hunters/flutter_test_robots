@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test_robots/src/input_method_engine.dart';
 
 /// Simulates keyboard input in your Flutter app.
 ///
@@ -61,7 +62,7 @@ extension KeyboardInput on WidgetTester {
   /// key simulations leads to unexpected results. By always using methods in this package, instead of
   /// standard Flutter methods, the simulated platform is guaranteed to match across calls, and also
   /// match the platform that's simulated within the surrounding test, i.e., [defaultTargetPlatform].
-  /// @{endtemplate}
+  /// {@endtemplate}
   Future<void> pressKey(LogicalKeyboardKey key) => sendKeyEvent(key, platform: _keyEventPlatform);
 
   /// Runs [simulateKeyDownEvent], using the current [defaultTargetPlatform] as the key simulators `platform` value.
@@ -82,6 +83,54 @@ extension KeyboardInput on WidgetTester {
   Future<void> pressEnter() async {
     await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await pumpAndSettle();
+  }
+
+  /// Simulates the user pressing ENTER in a widget attached to the IME.
+  ///
+  /// Instead of key events, this method generates a "\n" insertion followed by a TextInputAction.newline.
+  ///
+  /// {@template ime_client_getter}
+  /// The given [finder] must find a [StatefulWidget] whose [State] implements
+  /// [DeltaTextInputClient].
+  ///
+  /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
+  /// which is the standard behavior when typing new characters with an existing selection.
+  /// {@endtemplate}
+  Future<void> pressEnterWithIme({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    if (!testTextInput.hasAnyClients) {
+      // There isn't any IME connections.
+      return;
+    }
+
+    await ime.typeText('\n', finder: finder, getter: getter);
+    await pump();
+    await testTextInput.receiveAction(TextInputAction.newline);
+    await pump();
+  }
+
+  /// Simulates pressing an ENTER button, either as a keyboard key, or as a software keyboard action button.
+  ///
+  /// First, this method simulates pressing the ENTER key on a physical keyboard. If that key event goes unhandled
+  /// then this method simulates pressing the newline action button on a software keyboard, which inserts "/n"
+  /// into the text, and also sends a NEWLINE action to the IME client.
+  ///
+  /// {@macro ime_client_getter}
+  Future<void> pressEnterAdaptive({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    final handled = await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    if (handled) {
+      // The textfield handled the key event.
+      // It won't bubble up to the OS to generate text deltas or input actions.
+      await pumpAndSettle();
+      return;
+    }
+
+    await pressEnterWithIme();
   }
 
   Future<void> pressShiftEnter() async {
@@ -111,6 +160,48 @@ extension KeyboardInput on WidgetTester {
   Future<void> pressNumpadEnter() async {
     await sendKeyEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
     await pumpAndSettle();
+  }
+
+  /// Simulates the user pressing NUMPAD ENTER in a widget attached to the IME.
+  ///
+  /// Instead of key events, this method generates a "\n" insertion followed by a TextInputAction.newline.
+  /// Does nothing if there isn't an active IME connection.
+  ///
+  /// {@macro ime_client_getter}
+  Future<void> pressNumpadEnterWithIme({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    if (!testTextInput.hasAnyClients) {
+      // There isn't any IME connections.
+      return;
+    }
+
+    await ime.typeText('\n', finder: finder, getter: getter);
+    await testTextInput.receiveAction(TextInputAction.newline);
+    await pump();
+  }
+
+  /// Simulates pressing an NUMPAD ENTER button, either as a keyboard key, or as a software keyboard action button.
+  ///
+  /// First, this method simulates pressing the NUMPAD ENTER key on a physical keyboard. If that key event goes unhandled
+  /// then this method simulates pressing the newline action button on a software keyboard, which inserts "/n"
+  /// into the text, and also sends a NEWLINE action to the IME client.
+  ///
+  /// {@macro ime_client_getter}
+  Future<void> pressNumpadEnterAdaptive({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    final handled = await sendKeyEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
+    if (handled) {
+      // The textfield handled the key event.
+      // It won't bubble up to the OS to generate text deltas or input actions.
+      await pumpAndSettle();
+      return;
+    }
+
+    await pressNumpadEnterWithIme();
   }
 
   Future<void> pressShiftNumpadEnter() async {
