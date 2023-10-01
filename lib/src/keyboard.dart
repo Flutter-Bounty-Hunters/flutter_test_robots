@@ -82,6 +82,31 @@ extension KeyboardInput on WidgetTester {
 
   Future<void> pressEnter() async {
     await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
+    await pumpAndSettle();
+  }
+
+  /// Simulates the user pressing ENTER in a widget attached to the IME.
+  /// 
+  /// Instead of key events, this method generates a "\n" insertion followed by a TextInputAction.newline.
+  /// 
+  /// The given [finder] must find a [StatefulWidget] whose [State] implements
+  /// [DeltaTextInputClient].
+  ///
+  /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
+  /// which is the standard behavior when typing new characters with an existing selection.
+  Future<void> pressEnterWithIme({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    if (!testTextInput.hasAnyClients) {
+      // There isn't any IME connections.
+      return;
+    }
+
+    await ime.typeText('\n', finder: finder, getter: getter);
+    await pump();
+    await testTextInput.receiveAction(TextInputAction.newline);
+    await pump();
   }
 
   /// Simulates the user pressing ENTER on a widget that could be attached to the IME.
@@ -93,7 +118,7 @@ extension KeyboardInput on WidgetTester {
   ///
   /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
   /// which is the standard behavior when typing new characters with an existing selection.
-  Future<void> pressEnterWithIme({
+  Future<void> pressEnterAdaptive({
     Finder? finder,
     GetDeltaTextInputClient? getter,
   }) async {
@@ -147,6 +172,31 @@ extension KeyboardInput on WidgetTester {
     await pumpAndSettle();
   }
 
+  /// Simulates the user pressing NUMPAD ENTER in a widget attached to the IME.
+  /// 
+  /// Instead of key events, this method generates a "\n" insertion followed by a TextInputAction.newline.
+  /// Does nothing if there isn't an active IME connection.
+  /// 
+  /// The given [finder] must find a [StatefulWidget] whose [State] implements
+  /// [DeltaTextInputClient].
+  ///
+  /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
+  /// which is the standard behavior when typing new characters with an existing selection.
+  Future<void> pressNumpadEnterWithIme({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    if (!testTextInput.hasAnyClients) {
+      // There isn't any IME connections.
+      return;
+    }
+
+    await ime.typeText('\n', finder: finder, getter: getter);
+    await pump();
+    await testTextInput.receiveAction(TextInputAction.newline);
+    await pump();
+  }
+
   /// Simulates the user pressing NUMPAD ENTER on a widget that could be attached to the IME.
   /// 
   /// If the NUMPAD ENTER key isn't handled, generates a "\n" insertion followed by a TextInputAction.newline.
@@ -156,7 +206,7 @@ extension KeyboardInput on WidgetTester {
   ///
   /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
   /// which is the standard behavior when typing new characters with an existing selection.
-  Future<void> pressNumpadEnterWithIme({
+  Future<void> pressNumpadEnterAdaptive({
     Finder? finder,
     GetDeltaTextInputClient? getter,
   }) async {
