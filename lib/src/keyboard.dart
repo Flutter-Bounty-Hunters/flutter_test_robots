@@ -130,7 +130,7 @@ extension KeyboardInput on WidgetTester {
       return;
     }
 
-    await pressEnterWithIme();
+    await pressEnterWithIme(finder: finder, getter: getter);
   }
 
   Future<void> pressShiftEnter() async {
@@ -201,7 +201,7 @@ extension KeyboardInput on WidgetTester {
       return;
     }
 
-    await pressNumpadEnterWithIme();
+    await pressNumpadEnterWithIme(finder: finder, getter: getter);
   }
 
   Future<void> pressShiftNumpadEnter() async {
