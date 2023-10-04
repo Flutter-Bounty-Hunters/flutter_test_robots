@@ -1,3 +1,11 @@
+## 0.0.22
+Add support for pressing ENTER via IME (Oct, 2023)
+
+ * `pressEnterWithIme` - Simulate pressing the "newline" button on a software keyboard.
+ * `pressEnterAdapative` - Run `pressEnter()` and if it's not handled, run `pressEnterWithIme()`.
+ * `pressNumpadEnterWithIme`
+ * `pressNumpadEnterAdaptive`
+
 ## 0.0.21
 Additions and adjustments to work around Flutter's test key simulation (September, 2023)
 
