@@ -393,7 +393,7 @@ extension KeyboardInput on WidgetTester {
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
@@ -545,7 +545,7 @@ extension KeyboardInput on WidgetTester {
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
@@ -594,7 +594,7 @@ extension KeyboardInput on WidgetTester {
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
-    await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await pumpAndSettle();
   }
