@@ -635,6 +635,44 @@ extension KeyboardInput on WidgetTester {
     await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
     await tester.pumpAndSettle();
   }
+
+  /// Presses the key combination for the undo shortcut.
+  ///
+  /// On macOS, this is CMD+Z. On Windows and Linux, this is CTRL+Z.
+  Future<void> pressUndoCombo(WidgetTester tester) async {
+    if (const [TargetPlatform.macOS, TargetPlatform.iOS].contains(defaultTargetPlatform)) {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    } else {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    }
+  }
+
+  /// Presses the key combination for the redo shortcut.
+  ///
+  /// On macOS, this is CMD+SHIFT+Z. On Windows and Linux, this is CTRL+SHIFT+Z.
+  Future<void> pressRedoCombo(WidgetTester tester) async {
+    if (const [TargetPlatform.macOS, TargetPlatform.iOS].contains(defaultTargetPlatform)) {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    } else {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    }
+  }
 }
 
 String get _keyEventPlatform {
