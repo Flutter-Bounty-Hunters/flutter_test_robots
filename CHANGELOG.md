@@ -1,3 +1,11 @@
+## 0.0.23
+Add support for undo/redo shortcuts (Feb, 2024)
+
+ * `pressCmdZ`
+ * `pressCmdShiftZ`
+ * `pressCtrlZ`
+ * `pressCtrlShiftZ`
+
 ## 0.0.22
 Add support for pressing ENTER via IME (Oct, 2023)
 
