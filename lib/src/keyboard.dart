@@ -635,6 +635,38 @@ extension KeyboardInput on WidgetTester {
     await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
     await tester.pumpAndSettle();
   }
+
+  Future<void> pressCmdZ(WidgetTester tester) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+  }
+
+  Future<void> pressCtrlZ(WidgetTester tester) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+  }
+
+  Future<void> pressCmdShiftZ(WidgetTester tester) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+  }
+
+  Future<void> pressCtrlShiftZ(WidgetTester tester) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+  }
 }
 
 String get _keyEventPlatform {
