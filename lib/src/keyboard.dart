@@ -636,36 +636,36 @@ extension KeyboardInput on WidgetTester {
     await tester.pumpAndSettle();
   }
 
-  Future<void> pressCmdZ(WidgetTester tester) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+  Future<void> pressCmdZ() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
   }
 
-  Future<void> pressCtrlZ(WidgetTester tester) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+  Future<void> pressCtrlZ() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
   }
 
-  Future<void> pressCmdShiftZ(WidgetTester tester) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+  Future<void> pressCmdShiftZ() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
   }
 
-  Future<void> pressCtrlShiftZ(WidgetTester tester) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+  Future<void> pressCtrlShiftZ() async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
   }
 }
 
