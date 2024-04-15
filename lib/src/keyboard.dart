@@ -133,6 +133,34 @@ extension KeyboardInput on WidgetTester {
     await pressEnterWithIme(finder: finder, getter: getter);
   }
 
+  /// Simulates pressing the SPACE key.
+  ///
+  /// First, this method simulates pressing the SPACE key on a physical keyboard. If that key event goes unhandled
+  /// then this method generates an insertion delta of " ".
+  ///
+  /// If there isn't an active IME connection, no deltas are generated.
+  ///
+  /// {@macro ime_client_getter}
+  Future<void> pressSpaceAdaptive({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    final handled = await sendKeyEvent(LogicalKeyboardKey.space, platform: _keyEventPlatform);
+
+    if (handled) {
+      // The key press was handled by the app. We shouldn't generate any deltas.
+      await pumpAndSettle();
+      return;
+    }
+
+    if (!testTextInput.hasAnyClients) {
+      // There isn't any IME connections. Fizzle.
+      return;
+    }
+
+    await ime.typeText(' ', finder: finder, getter: getter);
+  }
+
   Future<void> pressShiftEnter() async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
