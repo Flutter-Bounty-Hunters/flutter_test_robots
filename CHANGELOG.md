@@ -1,5 +1,8 @@
+## 0.0.24
+Added `pressSpaceAdaptive` (May, 2024)
+
 ## 0.0.23
-Add support for undo/redo shortcuts (Feb, 2024)
+Added support for undo/redo shortcuts (Feb, 2024)
 
  * `pressCmdZ`
  * `pressCmdShiftZ`
