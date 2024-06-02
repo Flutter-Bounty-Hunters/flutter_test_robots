@@ -8,6 +8,9 @@
   </a>
 </p>
 
+<br><br>
+
+<p align="center">Check out our <a href="https://flutter-bounty-hunters.github.io/flutter_test_robots/" target="_blank">Usage Guide</a></p>
 
 ---
 
