@@ -33,14 +33,14 @@ When you want to simulate hardware keyboard text input, `flutter_test_robots` ma
 
 ```dart
 testWidgets((tester) async {
-    // Setup the test.
+  // Setup the test.
     
-    // Type “Hello, World!” via IME.
-    await tester.typeKeyboardText(
-      "Hello, World!"
-    );
-    
-    // Verify expectations.
+  // Type “Hello, World!” via IME.
+  await tester.typeKeyboardText(
+    "Hello, World!"
+  );
+  
+  // Verify expectations.
 });
 ```
 
