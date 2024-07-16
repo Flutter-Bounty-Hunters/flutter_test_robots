@@ -35,7 +35,7 @@ When you want to simulate hardware keyboard text input, `flutter_test_robots` ma
 testWidgets((tester) async {
   // Setup the test.
     
-  // Type “Hello, World!” via IME.
+  // Type “Hello, World!” via physical keyboard.
   await tester.typeKeyboardText(
     "Hello, World!"
   );
