@@ -6,6 +6,22 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// Simulates the user interacting with a Scrollbar.
 extension ScrollbarInteractions on WidgetTester {
+  /// Drag the scrollbar down by [delta] pixels.
+  ///
+  /// By default, this method expects a single [Scrollbar] in the widget tree and
+  /// finds it `byType`. To specify one [Scrollbar] among many, pass a [finder].
+  Future<void> dragScrollbarDown(double delta, [Finder? finder]) async {
+    await _dragScrollbar(delta, finder);
+  }
+
+  /// Drag the scrollbar up by [delta] pixels.
+  ///
+  /// By default, this method expects a single [Scrollbar] in the widget tree and
+  /// finds it `byType`. To specify one [Scrollbar] among many, pass a [finder].
+  Future<void> dragScrollbarUp(double delta, [Finder? finder]) async {
+    await _dragScrollbar(-delta, finder);
+  }
+
   /// Drag the scrollbar by [delta] pixels.
   ///
   /// A positive [delta] scrolls down or right, depending on the scrollbar's orientation,
@@ -13,7 +29,7 @@ extension ScrollbarInteractions on WidgetTester {
   ///
   /// By default, this method expects a single [Scrollbar] in the widget tree and
   /// finds it `byType`. To specify one [Scrollbar] among many, pass a [finder].
-  Future<void> dragScrollbar(double delta, [Finder? finder]) async {
+  Future<void> _dragScrollbar(double delta, [Finder? finder]) async {
     // Find where the scrollbar's thumb sits.
     final thumbRect = _findThumbRect(finder ?? find.byType(Scrollbar));
     final thumbOffset = thumbRect.center;
