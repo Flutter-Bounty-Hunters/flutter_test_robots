@@ -1,46 +1,46 @@
-// ignore_for_file: avoid_print
+import 'package:logging/logging.dart';
+export 'package:logging/logging.dart';
 
-import 'package:logging/logging.dart' as logging;
+abstract class FtrTestLogs {
+  static final imeTestClientLog = Logger("ime.test-client");
 
-class LogNames {
-  static const imeTestClient = 'ime.testclient';
-}
+  static final _activeLoggers = <Logger>{};
 
-final imeTestClientLog = logging.Logger(LogNames.imeTestClient);
+  static void initAllLogs(Level level) {
+    initLoggers(level, {Logger.root});
+  }
 
-final _activeLoggers = <logging.Logger>{};
+  static void initLoggers(Level level, Set<Logger> loggers) {
+    hierarchicalLoggingEnabled = true;
 
-void initAllLogs(logging.Level level) {
-  initLoggers(level, {logging.Logger.root});
-}
+    for (final logger in loggers) {
+      if (!_activeLoggers.contains(logger)) {
+        // ignore: avoid_print
+        print('Initializing logger: ${logger.name}');
+        logger
+          ..level = level
+          ..onRecord.listen(printLog);
 
-void initLoggers(logging.Level level, Set<logging.Logger> loggers) {
-  logging.hierarchicalLoggingEnabled = true;
-
-  for (final logger in loggers) {
-    if (!_activeLoggers.contains(logger)) {
-      print('Initializing logger: ${logger.name}');
-      logger
-        ..level = level
-        ..onRecord.listen(printLog);
-
-      _activeLoggers.add(logger);
+        _activeLoggers.add(logger);
+      }
     }
   }
-}
 
-void deactivateLoggers(Set<logging.Logger> loggers) {
-  for (final logger in loggers) {
-    if (_activeLoggers.contains(logger)) {
-      print('Deactivating logger: ${logger.name}');
-      logger.clearListeners();
+  static void deactivateLoggers(Set<Logger> loggers) {
+    for (final logger in loggers) {
+      if (_activeLoggers.contains(logger)) {
+        // ignore: avoid_print
+        print('Deactivating logger: ${logger.name}');
+        logger.clearListeners();
 
-      _activeLoggers.remove(logger);
+        _activeLoggers.remove(logger);
+      }
     }
   }
-}
 
-void printLog(logging.LogRecord record) {
-  print(
-      '(${record.time.second}.${record.time.millisecond.toString().padLeft(3, '0')}) ${record.loggerName} > ${record.level.name}: ${record.message}');
+  static void printLog(LogRecord record) {
+    // ignore: avoid_print
+    print(
+        '(${record.time.second}.${record.time.millisecond.toString().padLeft(3, '0')}) ${record.loggerName} > ${record.level.name}: ${record.message}');
+  }
 }

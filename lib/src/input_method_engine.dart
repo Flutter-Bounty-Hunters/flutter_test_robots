@@ -42,6 +42,8 @@ class ImeSimulator {
     String textToType, {
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
     final imeClient = _findImeClient(finder: finder, getter: getter);
 
@@ -50,11 +52,16 @@ class ImeSimulator {
         "The target widget doesn't have a text selection to type into.");
 
     for (final character in textToType.characters) {
-      await _typeCharacter(imeClient, character);
+      await _typeCharacter(imeClient, character, settle: settle, extraPumps: extraPumps);
     }
   }
 
-  Future<void> _typeCharacter(DeltaTextInputClient imeClient, String character) async {
+  Future<void> _typeCharacter(
+    DeltaTextInputClient imeClient,
+    String character, {
+    bool settle = true,
+    int extraPumps = 0,
+  }) async {
     assert(imeClient.currentTextEditingValue != null);
     assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1);
 
@@ -93,15 +100,17 @@ class ImeSimulator {
     // await _sendDeltasThroughChannel(deltas);
 
     // Let the app handle the deltas, however long it takes.
-    await _tester.pumpAndSettle();
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates the user pressing the tab button on a software keyboard.
   Future<void> pressTab({
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
-    await typeText('\t');
+    await typeText('\t', settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates the user pressing the backspace button.
@@ -111,6 +120,8 @@ class ImeSimulator {
   Future<void> backspace({
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
     final imeClient = _findImeClient(finder: finder, getter: getter);
 
@@ -152,7 +163,7 @@ class ImeSimulator {
     // await _sendDeltasThroughChannel(deltas);
 
     // Let the app handle the deltas, however long it takes.
-    await _tester.pumpAndSettle();
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates dispatching arbitrary deltas.
@@ -163,13 +174,15 @@ class ImeSimulator {
     List<TextEditingDelta> deltas, {
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
     final imeClient = _findImeClient(finder: finder, getter: getter);
 
     imeClient.updateEditingValueWithDeltas(deltas);
 
     // Let the app handle the deltas.
-    await _tester.pumpAndSettle();
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
   DeltaTextInputClient _findImeClient({
@@ -268,6 +281,15 @@ class ImeSimulator {
         return 'TextAffinity.downstream';
       case TextAffinity.upstream:
         return 'TextAffinity.upstream';
+    }
+  }
+
+  Future<void> _maybeSettleOrExtraPumps({bool settle = true, int extraPumps = 0}) async {
+    if (settle) {
+      await _tester.pumpAndSettle();
+    }
+    for (int i = 0; i < extraPumps; i += 1) {
+      await _tester.pump();
     }
   }
 }
