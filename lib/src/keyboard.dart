@@ -88,7 +88,16 @@ extension KeyboardInput on WidgetTester {
 
   /// Simulates the user pressing ENTER in a widget attached to the IME.
   ///
-  /// Instead of key events, this method generates a "\n" insertion followed by a TextInputAction.newline.
+  /// Instead of key events, this method generates a `\n` insertion followed by a `TextInputAction.newline`.
+  ///
+  /// {@template newline_quirks_mode}
+  /// WARNING: On Android Web, and seemingly only Android Web, we've observed that the standard behavior is
+  /// to send a newline `\n`, but not a `TextInputAction.newline`. Because this behavior is an outlier, we believe
+  /// it's likely some kind of bug. Rather than always implement this behavior for Android Web, this method
+  /// has a [useQuirksMode] parameter. When [useQuirksMode] is `true`, no `TextInputAction.newline` is dispatched
+  /// for Android Web, but when its `false`, a `\n` AND a `TextInputAction.newline` are both dispatched, regardless
+  /// of platform.
+  /// {@endtemplate}
   ///
   /// {@template ime_client_getter}
   /// The given [finder] must find a [StatefulWidget] whose [State] implements
@@ -102,6 +111,7 @@ extension KeyboardInput on WidgetTester {
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
+    bool useQuirksMode = true,
   }) async {
     if (!testTextInput.hasAnyClients) {
       // There isn't any IME connections.
@@ -110,8 +120,15 @@ extension KeyboardInput on WidgetTester {
 
     await ime.typeText('\n', finder: finder, getter: getter);
     await pump();
-    await testTextInput.receiveAction(TextInputAction.newline);
-    await pump();
+
+    // On any platform, except Android Web, we want to dispatch `TextInputAction.newline`
+    // in addition to the newline `\n`. However, on Android Web, when quirks mode is
+    // activated, we don't want to send a `TextInputAction.newline` because we've observed
+    // that in the real world, Android Web doesn't dispatch a `TextInputAction.newline`.
+    if (_keyEventPlatform != "android" || !kIsWeb || !useQuirksMode) {
+      await testTextInput.receiveAction(TextInputAction.newline);
+      await pump();
+    }
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
@@ -122,12 +139,17 @@ extension KeyboardInput on WidgetTester {
   /// then this method simulates pressing the newline action button on a software keyboard, which inserts "/n"
   /// into the text, and also sends a NEWLINE action to the IME client.
   ///
+  /// Pressing ENTER through the IME has some quirks:
+  ///
+  /// {@macro newline_quirks_mode}
+  ///
   /// {@macro ime_client_getter}
   Future<void> pressEnterAdaptive({
     Finder? finder,
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
+    bool useQuirksMode = true,
   }) async {
     final handled = await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     if (handled) {
@@ -137,7 +159,13 @@ extension KeyboardInput on WidgetTester {
       return;
     }
 
-    await pressEnterWithIme(finder: finder, getter: getter, settle: settle, extraPumps: extraPumps);
+    await pressEnterWithIme(
+      finder: finder,
+      getter: getter,
+      settle: settle,
+      extraPumps: extraPumps,
+      useQuirksMode: useQuirksMode,
+    );
   }
 
   /// Simulates pressing the SPACE key.
