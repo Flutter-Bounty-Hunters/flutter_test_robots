@@ -80,9 +80,10 @@ extension KeyboardInput on WidgetTester {
   /// {@macro flutter_key_simulation_override}
   Future<void> repeatKey(LogicalKeyboardKey key) => simulateKeyRepeatEvent(key, platform: _keyEventPlatform);
 
-  Future<void> pressEnter() async {
+  Future<void> pressEnter({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates the user pressing ENTER in a widget attached to the IME.
@@ -99,6 +100,8 @@ extension KeyboardInput on WidgetTester {
   Future<void> pressEnterWithIme({
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
     if (!testTextInput.hasAnyClients) {
       // There isn't any IME connections.
@@ -109,6 +112,8 @@ extension KeyboardInput on WidgetTester {
     await pump();
     await testTextInput.receiveAction(TextInputAction.newline);
     await pump();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates pressing an ENTER button, either as a keyboard key, or as a software keyboard action button.
@@ -121,16 +126,18 @@ extension KeyboardInput on WidgetTester {
   Future<void> pressEnterAdaptive({
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
     final handled = await sendKeyEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     if (handled) {
       // The textfield handled the key event.
       // It won't bubble up to the OS to generate text deltas or input actions.
-      await pumpAndSettle();
+      await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
       return;
     }
 
-    await pressEnterWithIme(finder: finder, getter: getter);
+    await pressEnterWithIme(finder: finder, getter: getter, settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates pressing the SPACE key.
@@ -144,12 +151,14 @@ extension KeyboardInput on WidgetTester {
   Future<void> pressSpaceAdaptive({
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
     final handled = await sendKeyEvent(LogicalKeyboardKey.space, platform: _keyEventPlatform);
 
     if (handled) {
       // The key press was handled by the app. We shouldn't generate any deltas.
-      await pumpAndSettle();
+      await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
       return;
     }
 
@@ -159,35 +168,41 @@ extension KeyboardInput on WidgetTester {
     }
 
     await ime.typeText(' ', finder: finder, getter: getter);
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftEnter() async {
+  Future<void> pressShiftEnter({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdEnter() async {
+  Future<void> pressCmdEnter({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlEnter() async {
+  Future<void> pressCtlEnter({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressNumpadEnter() async {
+  Future<void> pressNumpadEnter({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates the user pressing NUMPAD ENTER in a widget attached to the IME.
@@ -199,6 +214,8 @@ extension KeyboardInput on WidgetTester {
   Future<void> pressNumpadEnterWithIme({
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
     if (!testTextInput.hasAnyClients) {
       // There isn't any IME connections.
@@ -207,7 +224,8 @@ extension KeyboardInput on WidgetTester {
 
     await ime.typeText('\n', finder: finder, getter: getter);
     await testTextInput.receiveAction(TextInputAction.newline);
-    await pump();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates pressing an NUMPAD ENTER button, either as a keyboard key, or as a software keyboard action button.
@@ -220,480 +238,554 @@ extension KeyboardInput on WidgetTester {
   Future<void> pressNumpadEnterAdaptive({
     Finder? finder,
     GetDeltaTextInputClient? getter,
+    bool settle = true,
+    int extraPumps = 0,
   }) async {
     final handled = await sendKeyEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
     if (handled) {
       // The textfield handled the key event.
       // It won't bubble up to the OS to generate text deltas or input actions.
-      await pumpAndSettle();
+      await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
       return;
     }
 
-    await pressNumpadEnterWithIme(finder: finder, getter: getter);
+    await pressNumpadEnterWithIme(finder: finder, getter: getter, settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftNumpadEnter() async {
+  Future<void> pressShiftNumpadEnter({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.numpadEnter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressTab() async {
+  Future<void> pressTab({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.tab, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressBackspace() async {
+  Future<void> pressBackspace({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdBackspace() async {
+  Future<void> pressCmdBackspace({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressAltBackspace() async {
+  Future<void> pressAltBackspace({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlBackspace() async {
+  Future<void> pressCtlBackspace({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressDelete() async {
+  Future<void> pressDelete({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.delete, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdB() async {
+  Future<void> pressCmdB({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlB() async {
+  Future<void> pressCtlB({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdC() async {
+  Future<void> pressCmdC({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlC() async {
+  Future<void> pressCtlC({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdI() async {
+  Future<void> pressCmdI({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlI() async {
+  Future<void> pressCtlI({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdX() async {
+  Future<void> pressCmdX({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlX() async {
+  Future<void> pressCtlX({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdV() async {
+  Future<void> pressCmdV({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlV() async {
+  Future<void> pressCtlV({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdA() async {
+  Future<void> pressCmdA({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlA() async {
+  Future<void> pressCtlA({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlE() async {
+  Future<void> pressCtlE({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyE, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyE, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressHome() async {
+  Future<void> pressHome({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressEnd() async {
+  Future<void> pressEnd({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressLeftArrow() async {
+  Future<void> pressLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftLeftArrow() async {
+  Future<void> pressShiftLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressAltLeftArrow() async {
+  Future<void> pressAltLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftAltLeftArrow() async {
+  Future<void> pressShiftAltLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlLeftArrow() async {
+  Future<void> pressCtlLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftCtlLeftArrow() async {
+  Future<void> pressShiftCtlLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdLeftArrow() async {
+  Future<void> pressCmdLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftCmdLeftArrow() async {
+  Future<void> pressShiftCmdLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressRightArrow() async {
+  Future<void> pressRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftRightArrow() async {
+  Future<void> pressShiftRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressAltRightArrow() async {
+  Future<void> pressAltRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftAltRightArrow() async {
+  Future<void> pressShiftAltRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtlRightArrow() async {
+  Future<void> pressCtlRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftCtlRightArrow() async {
+  Future<void> pressShiftCtlRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdRightArrow() async {
+  Future<void> pressCmdRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftCmdRightArrow() async {
+  Future<void> pressShiftCmdRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressUpArrow() async {
+  Future<void> pressUpArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftUpArrow() async {
+  Future<void> pressShiftUpArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdUpArrow() async {
+  Future<void> pressCmdUpArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftCmdUpArrow() async {
+  Future<void> pressShiftCmdUpArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressAltUpArrow() async {
+  Future<void> pressAltUpArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftAltUpArrow() async {
+  Future<void> pressShiftAltUpArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowUp, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressDownArrow() async {
+  Future<void> pressDownArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftDownArrow() async {
+  Future<void> pressShiftDownArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdDownArrow() async {
+  Future<void> pressCmdDownArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftCmdDownArrow() async {
+  Future<void> pressShiftCmdDownArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressAltDownArrow() async {
+  Future<void> pressAltDownArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressShiftAltDownArrow() async {
+  Future<void> pressShiftAltDownArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowDown, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.alt, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressEscape() async {
+  Future<void> pressEscape({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.escape, platform: _keyEventPlatform);
-    await pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdHome(WidgetTester tester) async {
+  Future<void> pressCmdHome(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
     await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
-    await tester.pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdEnd(WidgetTester tester) async {
+  Future<void> pressCmdEnd(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
     await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
-    await tester.pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtrlHome(WidgetTester tester) async {
+  Future<void> pressCtrlHome(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
     await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
-    await tester.pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtrlEnd(WidgetTester tester) async {
+  Future<void> pressCtrlEnd(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
     await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
-    await tester.pumpAndSettle();
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdZ(WidgetTester tester) async {
+  Future<void> pressCmdZ(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
     await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtrlZ(WidgetTester tester) async {
+  Future<void> pressCtrlZ(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
     await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdShiftZ(WidgetTester tester) async {
+  Future<void> pressCmdShiftZ(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
     await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtrlShiftZ(WidgetTester tester) async {
+  Future<void> pressCtrlShiftZ(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
     await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> _maybeSettleOrExtraPumps({bool settle = true, int extraPumps = 0}) async {
+    if (settle) {
+      await pumpAndSettle();
+    }
+    for (int i = 0; i < extraPumps; i += 1) {
+      await pump();
+    }
   }
 }
 
