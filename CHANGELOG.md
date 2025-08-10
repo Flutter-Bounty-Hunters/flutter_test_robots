@@ -1,3 +1,9 @@
+## 1.0.0
+### Aug 10, 2025
+First stable release.
+
+No changes from previous release, but we think we've reached API stability.
+
 ## 0.1.0
 ### Aug 9, 2025
  * FEATURE: Added `pressShiftTab`
