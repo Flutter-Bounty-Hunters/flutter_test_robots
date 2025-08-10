@@ -24,3 +24,23 @@ jobs:
 
       # Run all tests
       - run: flutter test
+
+  build-website:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./doc/website
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v3
+
+      # Setup a Dart environment
+      - uses: dart-lang/setup-dart@v1
+
+      # Download all the packages that the app uses
+      - run: dart pub get
+
+      # Build the static site
+      - run: dart run bin/flutter_test_robots_docs.dart
+        env:
+          GHUB_DOC_WEBSITE_TOKEN: ${{ vars.GHUB_DOC_WEBSITE_TOKEN }}
