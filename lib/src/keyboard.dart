@@ -218,7 +218,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlEnter() instead")
   Future<void> pressCtlEnter({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlEnter(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlEnter({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.enter, platform: _keyEventPlatform);
@@ -328,7 +333,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlBackspace() instead")
   Future<void> pressCtlBackspace({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlBackspace(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlBackspace({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
@@ -352,7 +362,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlB() instead")
   Future<void> pressCtlB({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlB(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlB({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyB, platform: _keyEventPlatform);
@@ -370,7 +385,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlC() instead")
   Future<void> pressCtlC({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlC(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlC({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyC, platform: _keyEventPlatform);
@@ -388,7 +408,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlI() instead")
   Future<void> pressCtlI({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlI(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlI({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyI, platform: _keyEventPlatform);
@@ -406,7 +431,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlX() instead")
   Future<void> pressCtlX({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlX(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlX({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyX, platform: _keyEventPlatform);
@@ -424,7 +454,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlV() instead")
   Future<void> pressCtlV({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlV(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlV({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyV, platform: _keyEventPlatform);
@@ -442,7 +477,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlA() instead")
   Future<void> pressCtlA({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlA(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlA({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyA, platform: _keyEventPlatform);
@@ -451,7 +491,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlE() instead")
   Future<void> pressCtlE({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlE(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlE({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.keyE, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.keyE, platform: _keyEventPlatform);
@@ -509,7 +554,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlLeftArrow() instead")
   Future<void> pressCtlLeftArrow({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlLeftArrow(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
@@ -518,7 +568,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressShiftCtrlLeftArrow() instead")
   Future<void> pressShiftCtlLeftArrow({bool settle = true, int extraPumps = 0}) async {
+    await pressShiftCtrlLeftArrow(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressShiftCtrlLeftArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowLeft, platform: _keyEventPlatform);
@@ -584,7 +639,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressCtrlRightArrow() instead")
   Future<void> pressCtlRightArrow({bool settle = true, int extraPumps = 0}) async {
+    await pressCtrlRightArrow(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressCtrlRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
     await sendKeyUpEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
@@ -593,7 +653,12 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  @Deprecated("Use pressShiftCtrlRightArrow() instead")
   Future<void> pressShiftCtlRightArrow({bool settle = true, int extraPumps = 0}) async {
+    await pressShiftCtrlRightArrow(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> pressShiftCtrlRightArrow({bool settle = true, int extraPumps = 0}) async {
     await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
     await sendKeyDownEvent(LogicalKeyboardKey.arrowRight, platform: _keyEventPlatform);
@@ -740,78 +805,78 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdHome(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
+  Future<void> pressCmdHome({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdEnd(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
+  Future<void> pressCmdEnd({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtrlHome(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
+  Future<void> pressCtrlHome({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.home, platform: _keyEventPlatform);
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtrlEnd(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
+  Future<void> pressCtrlEnd({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.end, platform: _keyEventPlatform);
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdZ(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+  Future<void> pressCmdZ({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtrlZ(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+  Future<void> pressCtrlZ({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCmdShiftZ(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+  Future<void> pressCmdShiftZ({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.meta, platform: _keyEventPlatform);
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
-  Future<void> pressCtrlShiftZ(WidgetTester tester, {bool settle = true, int extraPumps = 0}) async {
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await tester.sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
-    await tester.sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+  Future<void> pressCtrlShiftZ({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.keyZ, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.control, platform: _keyEventPlatform);
 
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
