@@ -267,6 +267,15 @@ extension KeyboardInput on WidgetTester {
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
+  Future<void> pressShiftTab({bool settle = true, int extraPumps = 0}) async {
+    await sendKeyDownEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+    await sendKeyDownEvent(LogicalKeyboardKey.tab, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.tab, platform: _keyEventPlatform);
+    await sendKeyUpEvent(LogicalKeyboardKey.shift, platform: _keyEventPlatform);
+
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+  }
+
   Future<void> pressBackspace({bool settle = true, int extraPumps = 0}) async {
     await sendKeyEvent(LogicalKeyboardKey.backspace, platform: _keyEventPlatform);
 
