@@ -1,8 +1,17 @@
+## 0.1.0
+### Aug 9, 2025
+ * FEATURE: Added `pressShiftTab`
+ * ADJUSTMENT: Make it optional to "pump and settle" for every key press (instead of forcing it)
+ * ADJUSTMENT: Added a "quirks mode" when pressing ENTER via IME
+ * BREAKING: Removed unnecessary `WidgetTester` parameter for some key presses
+
 ## 0.0.24
-Added `pressSpaceAdaptive` (May, 2024)
+### May, 2025
+Added `pressSpaceAdaptive`
 
 ## 0.0.23
-Added support for undo/redo shortcuts (Feb, 2024)
+### Feb, 2024
+Added support for undo/redo shortcuts
 
  * `pressCmdZ`
  * `pressCmdShiftZ`
@@ -10,7 +19,8 @@ Added support for undo/redo shortcuts (Feb, 2024)
  * `pressCtrlShiftZ`
 
 ## 0.0.22
-Add support for pressing ENTER via IME (Oct, 2023)
+### Oct, 2023
+Add support for pressing ENTER via IME
 
  * `pressEnterWithIme` - Simulate pressing the "newline" button on a software keyboard.
  * `pressEnterAdapative` - Run `pressEnter()` and if it's not handled, run `pressEnterWithIme()`.
@@ -18,7 +28,8 @@ Add support for pressing ENTER via IME (Oct, 2023)
  * `pressNumpadEnterAdaptive`
 
 ## 0.0.21
-Additions and adjustments to work around Flutter's test key simulation (September, 2023)
+### September, 2023
+Additions and adjustments to work around Flutter's test key simulation
 
  * `pressKey`, `pressKeyDown`, `releaseKeyUp`, `repeatKey` wraps standard Flutter key simulations
     to prevent platform mismatches across key presses.
@@ -26,10 +37,12 @@ Additions and adjustments to work around Flutter's test key simulation (Septembe
     bug with generating key events for characters, specifically when simulating `platform` "ios".
 
 ## 0.0.20
-(DEPRECATED) Fixed a bug in keyboard key event platform overrides from version `0.0.19` (September, 2023)
+### September, 2023
+(DEPRECATED) Fixed a bug in keyboard key event platform overrides from version `0.0.19`
 
 ## 0.0.19
-(DEPRECATED) Keyboard and IME additions (September, 2023)
+### September, 2023
+(DEPRECATED) Keyboard and IME additions
 
  * CTRL + HOME/END
  * CMD + HOME/END
@@ -38,13 +51,16 @@ Additions and adjustments to work around Flutter's test key simulation (Septembe
  * All keyboard event now simulate with a platform as chosen by `defaultTargetPlatform`
 
 ## 0.0.18
-Added arbitrary delta from simulated IME (December, 2022)
+### December, 2022
+Added arbitrary delta from simulated IME
 
 ## 0.0.17
-Added simulated IME text input and backspace (August, 2022)
+### August, 2022
+Added simulated IME text input and backspace
 
 ## 0.0.16
-Add key combos (June, 2022)
+### June, 2022
+Add key combos
 
 * CMD + B
 * CMD + I
@@ -56,54 +72,64 @@ Add key combos (June, 2022)
 * ALT + DOWN ARROW
 
 ## 0.0.14
-Changed simulated clipboard initialization (June, 2022)
+### June, 2022
+Changed simulated clipboard initialization
 
 * Changed `ClipboardInteractions` > `simulateClipboard()` to clear the clipboard content, if a clipboard simulation is already active. This provides a consistent initial state across multiple tests.
 
 ## 0.0.13
-Fixed simulated clipboard initialization (June, 2022)
+### June, 2022
+Fixed simulated clipboard initialization
 
 * Bugfix - `ClipboardInteractions` previously didn't `init()` the simulation when requested. Now it does.
 
 ## 0.0.12
-Changed simulated clipboard API (June, 2022)
+### June, 2022
+Changed simulated clipboard API
 
 * BREAKING - Changed `ClipboardInteractions` extensions to return clipboard text synchronously.
 
 ## 0.0.11
-Added SimulatedClipboard (June, 2022)
+### June, 2022
+Added SimulatedClipboard
 
 * Added SimulatedClipboard and WidgetTester extensions to easily verify expected Clipboard interactions.
 
 ## 0.0.10
-Add HOME and END (June, 2022)
+### June, 2022
+Add HOME and END
 
 * HOME
 * END
 
 ## 0.0.9
-Fixed a bug (June, 2022)
+### June, 2022
+Fixed a bug
 
 * Fixed CTL + BACKSPACE, previous implementation was pressing CMD + CTL
 
 ## 0.0.8
-Add key combos (June, 2022)
+### June, 2022
+Add key combos
 
 * CTL + BACKSPACE
 * ALT + BACKSPACE
 
 ## 0.0.7
-Add key combos (June, 2022)
+### June, 2022
+Add key combos
 
 * CTL + E
 
 ## 0.0.6
-Add key combos (June, 2022)
+### June, 2022
+Add key combos
 
 * CMD + BACKSPACE
 
 ## 0.0.5
-Add key combos (June, 2022)
+### June, 2022
+Add key combos
 
 * SHIFT + UP ARROW
 * SHIFT + CMD + UP ARROW
@@ -111,7 +137,8 @@ Add key combos (June, 2022)
 * SHIFT + CMD + DOWN ARROW
 
 ## 0.0.4
-Add key combos (June, 2022)
+### June, 2022
+Add key combos
 
 * ALT + LEFT ARROW
 * CTL + LEFT ARROW
@@ -125,19 +152,22 @@ Add key combos (June, 2022)
 * SHIFT + CMD + RIGHT ARROW
 
 ## 0.0.3
-Add key combos (June, 2022)
+### June, 2022
+Add key combos
 
 * CMD/CTL + A 
 
 ## 0.0.2
-Add key combos (June, 2022)
+### June, 2022
+Add key combos
 
 * CMD/CTL + C
 * CMD/CTL + X
 * CMD/CTL + V 
 
 ## 0.0.1
-Initial release (June, 2022)
+### June, 2022
+Initial release
 
 Test APIs for:
 * pressing specific keyboard keys
