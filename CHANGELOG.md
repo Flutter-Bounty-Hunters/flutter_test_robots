@@ -1,3 +1,9 @@
+## 1.1.0
+### June 14, 2026
+ * FEATURE: `WidgetTester` extensions for device configurations, e.g., `tester.asIPhone16ProMax()`.
+ * ADJUSTMENT: Added 60+ new keyboard shortcut simulations.
+ * BREAKING: Updated min Flutter version from `1.17.0` to `3.10.0`.
+
 ## 1.0.0
 ### Aug 10, 2025
 First stable release.
