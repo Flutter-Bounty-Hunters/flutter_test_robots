@@ -53,3 +53,24 @@ void main() {
   });
 }
 ```
+
+## Simulate popular mobile devices
+`flutter_test_robots` can configure a `WidgetTester` viewport like popular recent phones.
+
+```dart
+void main() {
+  testWidgets("renders on iPhone 16 Pro Max", (tester) async {
+    tester.asIPhone16ProMax();
+
+    await tester.pumpWidget(MyApp());
+  });
+
+  testWidgets("renders on every built-in test device", (tester) async {
+    for (final device in TestDevices.all) {
+      tester.configureForDevice(device);
+
+      await tester.pumpWidget(MyApp());
+    }
+  });
+}
+```
