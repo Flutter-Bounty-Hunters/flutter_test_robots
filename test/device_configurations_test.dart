@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_test_robots/src/device_configurations.dart';
 
 void main() {
-  group("DeviceConfigurations >", () {
+  group("Device Configurations >", () {
     testWidgets("configures a named iPhone device", (tester) async {
       tester.asIPhone16ProMax();
 
