@@ -78,28 +78,32 @@ extension ScrollbarInteractions on WidgetTester {
     final scrollPosition = scrollState.position;
     final isVertical = scrollPosition.axisDirection == AxisDirection.down || //
         scrollPosition.axisDirection == AxisDirection.up;
+    final padding = scrollbarPainter.padding.resolve(scrollbarPainter.textDirection);
 
     final orientation = _resolvedOrientation(scrollbarPainter, isVertical);
     final leadingTrackMainAxisOffset =
         orientation == ScrollbarOrientation.left || orientation == ScrollbarOrientation.right //
-            ? scrollbarPainter.padding.top
-            : scrollbarPainter.padding.left;
+            ? padding.top
+            : padding.left;
 
     final leadingThumbMainAxisOffset = leadingTrackMainAxisOffset + scrollbarPainter.mainAxisMargin;
 
     final traversableTrackExtent = _findTraversableTrackExtent(
       scrollbarPainter: scrollbarPainter,
       scrollPosition: scrollPosition,
+      padding: padding,
     );
     final thumbExtent = _findThumbExtent(
       scrollbarPainter: scrollbarPainter,
       scrollPosition: scrollPosition,
       traversableTrackExtent: traversableTrackExtent,
+      padding: padding,
     );
     final thumbOffset = _getScrollToTrack(
           scrollbarPainter: scrollbarPainter,
           scrollPosition: scrollPosition,
           thumbExtent: thumbExtent,
+          padding: padding,
         ) +
         leadingThumbMainAxisOffset;
 
@@ -110,29 +114,23 @@ extension ScrollbarInteractions on WidgetTester {
     switch (orientation) {
       case ScrollbarOrientation.left:
         thumbSize = Size(scrollbarPainter.thickness, thumbExtent);
-        thumbX = scrollbarPainter.crossAxisMargin + scrollbarPainter.padding.left;
+        thumbX = scrollbarPainter.crossAxisMargin + padding.left;
         thumbY = thumbOffset;
         break;
       case ScrollbarOrientation.right:
         thumbSize = Size(scrollbarPainter.thickness, thumbExtent);
-        thumbX = scrollableSize.width -
-            scrollbarPainter.thickness -
-            scrollbarPainter.crossAxisMargin -
-            scrollbarPainter.padding.right;
+        thumbX = scrollableSize.width - scrollbarPainter.thickness - scrollbarPainter.crossAxisMargin - padding.right;
         thumbY = thumbOffset;
         break;
       case ScrollbarOrientation.top:
         thumbSize = Size(thumbExtent, scrollbarPainter.thickness);
         thumbX = thumbOffset;
-        thumbY = scrollbarPainter.crossAxisMargin + scrollbarPainter.padding.top;
+        thumbY = scrollbarPainter.crossAxisMargin + padding.top;
         break;
       case ScrollbarOrientation.bottom:
         thumbSize = Size(thumbExtent, scrollbarPainter.thickness);
         thumbX = thumbOffset;
-        thumbY = scrollableSize.height -
-            scrollbarPainter.thickness -
-            scrollbarPainter.crossAxisMargin -
-            scrollbarPainter.padding.bottom;
+        thumbY = scrollableSize.height - scrollbarPainter.thickness - scrollbarPainter.crossAxisMargin - padding.bottom;
         break;
     }
 
@@ -148,6 +146,7 @@ extension ScrollbarInteractions on WidgetTester {
     required ScrollbarPainter scrollbarPainter,
     required ScrollPosition scrollPosition,
     required double thumbExtent,
+    required EdgeInsets padding,
   }) {
     final scrollableExtent = scrollPosition.maxScrollExtent - scrollPosition.minScrollExtent;
     final axisDirection = scrollPosition.axisDirection;
@@ -161,8 +160,7 @@ extension ScrollbarInteractions on WidgetTester {
 
     final isVertical = axisDirection == AxisDirection.down || //
         axisDirection == AxisDirection.up;
-    final totalTrackMainAxisOffset =
-        isVertical ? scrollbarPainter.padding.vertical : scrollbarPainter.padding.horizontal;
+    final totalTrackMainAxisOffset = isVertical ? padding.vertical : padding.horizontal;
     final trackExtent = scrollPosition.viewportDimension - totalTrackMainAxisOffset;
     final traversableTrackExtent = trackExtent - (2 * scrollbarPainter.mainAxisMargin);
 
@@ -192,11 +190,11 @@ extension ScrollbarInteractions on WidgetTester {
     required ScrollbarPainter scrollbarPainter,
     required ScrollPosition scrollPosition,
     required double traversableTrackExtent,
+    required EdgeInsets padding,
   }) {
     final isVertical = scrollPosition.axisDirection == AxisDirection.down || //
         scrollPosition.axisDirection == AxisDirection.up;
-    final totalTrackMainAxisOffsets =
-        isVertical ? scrollbarPainter.padding.vertical : scrollbarPainter.padding.horizontal;
+    final totalTrackMainAxisOffsets = isVertical ? padding.vertical : padding.horizontal;
     final totalContentExtent =
         scrollPosition.maxScrollExtent - scrollPosition.minScrollExtent + scrollPosition.viewportDimension;
 
@@ -248,12 +246,12 @@ extension ScrollbarInteractions on WidgetTester {
   double _findTraversableTrackExtent({
     required ScrollbarPainter scrollbarPainter,
     required ScrollPosition scrollPosition,
+    required EdgeInsets padding,
   }) {
     final isVertical = scrollPosition.axisDirection == AxisDirection.down || //
         scrollPosition.axisDirection == AxisDirection.up;
 
-    final totalTrackMainAxisOffset =
-        isVertical ? scrollbarPainter.padding.vertical : scrollbarPainter.padding.horizontal;
+    final totalTrackMainAxisOffset = isVertical ? padding.vertical : padding.horizontal;
     final trackExtent = scrollPosition.viewportDimension - totalTrackMainAxisOffset;
 
     return trackExtent - (2 * scrollbarPainter.mainAxisMargin);
