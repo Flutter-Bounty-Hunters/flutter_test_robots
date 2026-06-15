@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_test_robots/src/input_method_engine.dart';
+import 'package:flutter_test_robots/src/input_method_editor.dart';
 
 /// Simulates keyboard input in your Flutter app.
 ///
@@ -21,7 +21,7 @@ extension KeyboardInput on WidgetTester {
   ///
   /// This method only works with widgets that are configured to handle
   /// keyboard keys, which is different from the standard text input system,
-  /// called the Input Method Engine (IME). For example, a standard Flutter
+  /// called the Input Method Editor (IME). For example, a standard Flutter
   /// `TextField` only responds to the IME, so this method would have no
   /// effect on a `TextField`.
   Future<void> typeKeyboardText(String plainText) async {
@@ -107,7 +107,13 @@ extension KeyboardInput on WidgetTester {
   /// which is the standard behavior when typing new characters with an existing selection.
   /// {@endtemplate}
   Future<void> pressEnterWithIme({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -145,7 +151,13 @@ extension KeyboardInput on WidgetTester {
   ///
   /// {@macro ime_client_getter}
   Future<void> pressEnterAdaptive({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -177,7 +189,13 @@ extension KeyboardInput on WidgetTester {
   ///
   /// {@macro ime_client_getter}
   Future<void> pressSpaceAdaptive({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -245,7 +263,13 @@ extension KeyboardInput on WidgetTester {
   ///
   /// {@macro ime_client_getter}
   Future<void> pressNumpadEnterWithIme({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -269,7 +293,13 @@ extension KeyboardInput on WidgetTester {
   ///
   /// {@macro ime_client_getter}
   Future<void> pressNumpadEnterAdaptive({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
