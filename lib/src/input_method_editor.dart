@@ -31,10 +31,43 @@ class ImeSimulator {
 
   final WidgetTester _tester;
 
+  _SimulatedImeTextInputControl get _inputControl => _SimulatedImeTextInputControl.instance;
+
+  /// Installs this simulator as Flutter's current text input control.
+  ///
+  /// This is optional. Calls that don't pass a [Finder] or [GetDeltaTextInputClient]
+  /// install the simulated IME automatically before targeting the active text
+  /// input client.
+  void install() {
+    _inputControl.install();
+  }
+
+  /// Restores Flutter's default platform text input control.
+  void uninstall() {
+    _inputControl.uninstall();
+  }
+
+  /// Whether the simulated IME is installed as Flutter's current text input control.
+  bool get isInstalled => _inputControl.isInstalled;
+
+  /// Whether the simulated IME is attached to an active text input client.
+  bool get hasActiveClient => _inputControl.hasActiveClient;
+
+  /// Whether the simulated keyboard is visible.
+  bool get isVisible => _inputControl.isVisible;
+
+  /// The active client's current editing value, when a client is attached.
+  TextEditingValue? get currentTextEditingValue => _inputControl.currentTextEditingValue;
+
   /// Simulates the user typing [textToType], character by character.
   ///
-  /// The given [finder] must find a [StatefulWidget] whose [State] implements
-  /// [DeltaTextInputClient].
+  /// If [finder] is provided, it must find a [StatefulWidget] whose [State]
+  /// implements [DeltaTextInputClient]. If [getter] is provided, it must return
+  /// a [DeltaTextInputClient]. Those legacy lookup options are retained for
+  /// compatibility.
+  ///
+  /// If neither [finder] nor [getter] is provided, the simulator installs a
+  /// [TextInputControl] and targets the active text input client.
   ///
   /// If the [DeltaTextInputClient] currently has selected text, that text is first deleted,
   /// which is the standard behavior when typing new characters with an existing selection.
@@ -45,7 +78,7 @@ class ImeSimulator {
     bool settle = true,
     int extraPumps = 0,
   }) async {
-    final imeClient = _findImeClient(finder: finder, getter: getter);
+    final imeClient = await _getImeClient(finder: finder, getter: getter);
 
     assert(imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to type into.");
     assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1,
@@ -110,7 +143,7 @@ class ImeSimulator {
     bool settle = true,
     int extraPumps = 0,
   }) async {
-    await typeText('\t', settle: settle, extraPumps: extraPumps);
+    await typeText('\t', finder: finder, getter: getter, settle: settle, extraPumps: extraPumps);
   }
 
   /// Simulates the user pressing the backspace button.
@@ -123,7 +156,7 @@ class ImeSimulator {
     bool settle = true,
     int extraPumps = 0,
   }) async {
-    final imeClient = _findImeClient(finder: finder, getter: getter);
+    final imeClient = await _getImeClient(finder: finder, getter: getter);
 
     assert(
         imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to backspace in.");
@@ -168,8 +201,13 @@ class ImeSimulator {
 
   /// Simulates dispatching arbitrary deltas.
   ///
-  /// The given [finder] must find a [StatefulWidget] whose [State] implements
-  /// [DeltaTextInputClient].
+  /// If [finder] is provided, it must find a [StatefulWidget] whose [State]
+  /// implements [DeltaTextInputClient]. If [getter] is provided, it must return
+  /// a [DeltaTextInputClient]. Those legacy lookup options are retained for
+  /// compatibility.
+  ///
+  /// If neither [finder] nor [getter] is provided, the simulator installs a
+  /// [TextInputControl] and targets the active text input client.
   Future<void> sendDeltas(
     List<TextEditingDelta> deltas, {
     Finder? finder,
@@ -177,12 +215,27 @@ class ImeSimulator {
     bool settle = true,
     int extraPumps = 0,
   }) async {
-    final imeClient = _findImeClient(finder: finder, getter: getter);
+    final imeClient = await _getImeClient(finder: finder, getter: getter);
 
     imeClient.updateEditingValueWithDeltas(deltas);
 
     // Let the app handle the deltas.
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<DeltaTextInputClient> _getImeClient({
+    Finder? finder,
+    GetDeltaTextInputClient? getter,
+  }) async {
+    if (finder != null || getter != null) {
+      return _findImeClient(finder: finder, getter: getter);
+    }
+
+    _inputControl.install();
+    if (!_inputControl.hasActiveClient) {
+      await _requestExistingInputState();
+    }
+    return _inputControl.deltaTextInputClient;
   }
 
   DeltaTextInputClient _findImeClient({
@@ -200,22 +253,32 @@ class ImeSimulator {
 
   // ignore: unused_element
   Future<void> _sendDeltasThroughChannel(List<TextEditingDelta> deltas) async {
-    final ByteData? messageBytes = const JSONMessageCodec().encodeMessage(<String, dynamic>{
-      'args': <dynamic>[
-        1,
-        {
-          "deltas": [
-            for (final delta in deltas) //
-              _deltaToJson(delta, delta.oldText),
-          ],
-        },
-      ],
-      'method': 'TextInputClient.updateEditingStateWithDeltas',
-    });
+    await _sendTextInputMethodCall(
+      MethodCall(
+        'TextInputClient.updateEditingStateWithDeltas',
+        <dynamic>[
+          -1,
+          {
+            "deltas": [
+              for (final delta in deltas) //
+                _deltaToJson(delta, delta.oldText),
+            ],
+          },
+        ],
+      ),
+    );
+  }
 
+  Future<void> _requestExistingInputState() async {
+    await _sendTextInputMethodCall(
+      const MethodCall('TextInputClient.requestExistingInputState'),
+    );
+  }
+
+  Future<void> _sendTextInputMethodCall(MethodCall methodCall) async {
     await _tester.binding.defaultBinaryMessenger.handlePlatformMessage(
-      'flutter/textinput',
-      messageBytes,
+      SystemChannels.textInput.name,
+      SystemChannels.textInput.codec.encodeMethodCall(methodCall),
       (ByteData? _) {},
     );
   }
@@ -263,6 +326,9 @@ class ImeSimulator {
     } else if (delta is TextEditingDeltaNonTextUpdate) {
       return {
         "oldText": oldText,
+        "deltaStart": -1,
+        "deltaEnd": -1,
+        "deltaText": "",
         "selectionBase": delta.selection.baseOffset,
         "selectionExtent": delta.selection.extentOffset,
         "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
@@ -295,3 +361,109 @@ class ImeSimulator {
 }
 
 typedef GetDeltaTextInputClient = DeltaTextInputClient Function();
+
+class _SimulatedImeTextInputControl with TextInputControl {
+  _SimulatedImeTextInputControl._();
+
+  static final _SimulatedImeTextInputControl instance = _SimulatedImeTextInputControl._();
+
+  TextInputClient? _client;
+  TextInputConfiguration? _configuration;
+  TextEditingValue? _editingValue;
+  bool _isInstalled = false;
+  bool _isVisible = false;
+
+  bool get isInstalled => _isInstalled;
+
+  bool get hasActiveClient => _client != null;
+
+  bool get isVisible => _isVisible;
+
+  TextEditingValue? get currentTextEditingValue => _client?.currentTextEditingValue ?? _editingValue;
+
+  DeltaTextInputClient get deltaTextInputClient {
+    final client = _client;
+
+    if (client == null) {
+      throw StateError(
+        "There isn't an active text input client. Focus a text input before simulating IME behavior.",
+      );
+    }
+
+    if (_configuration?.enableDeltaModel != true) {
+      throw StateError(
+        "The active text input client hasn't enabled Flutter's delta model. "
+        "Use a TextInputConfiguration with enableDeltaModel set to true before "
+        "simulating delta-based IME behavior.",
+      );
+    }
+
+    if (client is! DeltaTextInputClient) {
+      throw StateError(
+        "The active text input client isn't a DeltaTextInputClient. "
+        "Use a delta-enabled text input before simulating delta-based IME behavior.",
+      );
+    }
+
+    return client;
+  }
+
+  void install() {
+    if (_isInstalled) {
+      return;
+    }
+
+    TextInput.setInputControl(this);
+    _isInstalled = true;
+  }
+
+  void uninstall() {
+    if (!_isInstalled) {
+      return;
+    }
+
+    TextInput.restorePlatformInputControl();
+    _isInstalled = false;
+    _client = null;
+    _configuration = null;
+    _editingValue = null;
+    _isVisible = false;
+  }
+
+  @override
+  void attach(TextInputClient client, TextInputConfiguration configuration) {
+    _client = client;
+    _configuration = configuration;
+    _editingValue = client.currentTextEditingValue;
+  }
+
+  @override
+  void detach(TextInputClient client) {
+    if (_client == client) {
+      _client = null;
+      _configuration = null;
+      _editingValue = null;
+      _isVisible = false;
+    }
+  }
+
+  @override
+  void show() {
+    _isVisible = true;
+  }
+
+  @override
+  void hide() {
+    _isVisible = false;
+  }
+
+  @override
+  void updateConfig(TextInputConfiguration configuration) {
+    _configuration = configuration;
+  }
+
+  @override
+  void setEditingState(TextEditingValue value) {
+    _editingValue = value;
+  }
+}
