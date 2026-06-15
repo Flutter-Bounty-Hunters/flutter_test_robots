@@ -24,7 +24,7 @@ void main() {
 
     await tester.pressShiftEnter();
     
-    await tester.pressCmdAltLeftArrow();
+    await tester.pressAltLeftArrow();
   });
 }
 ```

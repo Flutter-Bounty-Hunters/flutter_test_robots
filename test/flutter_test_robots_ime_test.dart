@@ -359,7 +359,8 @@ void main() {
 
         const expectedText = "I don't know ";
         expect(find.text(expectedText), findsOneWidget);
-        expect(tester.ime.currentTextEditingValue?.selection, TextSelection.collapsed(offset: expectedText.length));
+        expect(
+            tester.ime.currentTextEditingValue?.selection, const TextSelection.collapsed(offset: expectedText.length));
         expect(tester.ime.currentTextEditingValue?.composing, TextRange.empty);
       });
 
@@ -380,7 +381,8 @@ void main() {
 
         const expectedText = "say On my way! ";
         expect(find.text(expectedText), findsOneWidget);
-        expect(tester.ime.currentTextEditingValue?.selection, TextSelection.collapsed(offset: expectedText.length));
+        expect(
+            tester.ime.currentTextEditingValue?.selection, const TextSelection.collapsed(offset: expectedText.length));
         expect(tester.ime.currentTextEditingValue?.composing, TextRange.empty);
       });
     });
