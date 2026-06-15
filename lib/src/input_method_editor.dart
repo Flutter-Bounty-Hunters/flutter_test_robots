@@ -2,18 +2,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Extensions on [WidgetTester] for simulating input method engine (IME) behavior.
+/// Extensions on [WidgetTester] for simulating input method editor (IME) behavior.
 extension ImeTester on WidgetTester {
   /// Returns an [ImeSimulator], which can be used to simulate various user
-  /// interactions, as if they originated in the platform's input method engine.
+  /// interactions, as if they originated in the platform's input method editor.
   ImeSimulator get ime => ImeSimulator(this);
 }
 
-/// Simulator for input method engine (IME) behavior.
+/// Simulator for input method editor (IME) behavior.
 ///
 /// When users enter text, or press certain keys, those signals are intercepted by the
 /// host operating system and communicated to the app through something called the
-/// "input method engine" or "IME".
+/// "input method editor" or "IME".
 ///
 /// The reason for the IME is to introduce any number of content manipulations before the
 /// change reaches the app. For example, spelling auto-correct, special character combinations,

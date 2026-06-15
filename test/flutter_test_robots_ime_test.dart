@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_test_robots/src/input_method_engine.dart';
+import 'package:flutter_test_robots/flutter_test_robots.dart';
 
-import 'basic_ime_client.dart';
+import 'tools/basic_ime_client.dart';
 
 void main() {
   group("IME simulator", () {
