@@ -107,7 +107,13 @@ extension KeyboardInput on WidgetTester {
   /// which is the standard behavior when typing new characters with an existing selection.
   /// {@endtemplate}
   Future<void> pressEnterWithIme({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -145,7 +151,13 @@ extension KeyboardInput on WidgetTester {
   ///
   /// {@macro ime_client_getter}
   Future<void> pressEnterAdaptive({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -177,7 +189,13 @@ extension KeyboardInput on WidgetTester {
   ///
   /// {@macro ime_client_getter}
   Future<void> pressSpaceAdaptive({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -245,7 +263,13 @@ extension KeyboardInput on WidgetTester {
   ///
   /// {@macro ime_client_getter}
   Future<void> pressNumpadEnterWithIme({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -269,7 +293,13 @@ extension KeyboardInput on WidgetTester {
   ///
   /// {@macro ime_client_getter}
   Future<void> pressNumpadEnterAdaptive({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,

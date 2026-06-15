@@ -86,7 +86,13 @@ class ImeSimulator {
   /// which is the standard behavior when typing new characters with an existing selection.
   Future<void> typeText(
     String textToType, {
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -275,7 +281,13 @@ class ImeSimulator {
 
   /// Simulates the user pressing the tab button on a software keyboard.
   Future<void> pressTab({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -288,7 +300,13 @@ class ImeSimulator {
   /// If the selection is collapsed, the upstream character is deleted. If the selection is expanded, then
   /// the selection is deleted.
   Future<void> backspace({
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
@@ -430,7 +448,13 @@ class ImeSimulator {
   /// [TextInputControl] and targets the active text input client.
   Future<void> sendDeltas(
     List<TextEditingDelta> deltas, {
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     Finder? finder,
+    @Deprecated(
+      "Your editor/text field is now found automatically. Not needed. Just ensure your editor/text field is focused.",
+    )
     GetDeltaTextInputClient? getter,
     bool settle = true,
     int extraPumps = 0,
