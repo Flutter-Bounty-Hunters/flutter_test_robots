@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,11 +36,23 @@ class ImeSimulator {
 
   /// Installs this simulator as Flutter's current text input control.
   ///
+  /// Developers can optionally provide [expansions], which are text runs that expand to larger text, e.g.,
+  /// "omw" becomes "On my way!", and [autocorrects], which are common misspellings and their corrections.
+  /// When using [typeText], the insertion of a space after a non-space will evaluate both [expansions] and
+  /// [autocorrects] and apply any matching candidate. This simulates what the OS does when running real
+  /// apps, but with developer control.
+  ///
   /// This is optional. Calls that don't pass a [Finder] or [GetDeltaTextInputClient]
   /// install the simulated IME automatically before targeting the active text
   /// input client.
-  void install() {
-    _inputControl.install();
+  void install({
+    Map<String, String> expansions = const {},
+    Map<String, String> autocorrects = const {},
+  }) {
+    _inputControl.install(
+      expansions: expansions,
+      autocorrects: autocorrects,
+    );
   }
 
   /// Restores Flutter's default platform text input control.
@@ -54,7 +67,7 @@ class ImeSimulator {
   bool get hasActiveClient => _inputControl.hasActiveClient;
 
   /// Whether the simulated keyboard is visible.
-  bool get isVisible => _inputControl.isVisible;
+  bool get isVisible => _inputControl.isKeyboardVisible;
 
   /// The active client's current editing value, when a client is attached.
   TextEditingValue? get currentTextEditingValue => _inputControl.currentTextEditingValue;
@@ -81,12 +94,84 @@ class ImeSimulator {
     final imeClient = await _getImeClient(finder: finder, getter: getter);
 
     assert(imeClient.currentTextEditingValue != null, "The target widget doesn't have a text selection to type into.");
-    assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1,
-        "The target widget doesn't have a text selection to type into.");
+    assert(
+      imeClient.currentTextEditingValue!.selection.extentOffset != -1,
+      "The target widget doesn't have a text selection to type into.",
+    );
 
     for (final character in textToType.characters) {
-      await _typeCharacter(imeClient, character, settle: settle, extraPumps: extraPumps);
+      final accentMark = defaultTargetPlatform == TargetPlatform.macOS //
+          ? _macOsDeadKeyAccentedCharacters[character]
+          : null;
+
+      if (accentMark != null) {
+        // Accent characters involve multiple key presses, so we have to handle them in a special way.
+        //
+        // Example: Typing é requires a key combo, followed by a letter: `opt+e`, `e`.
+        await _typeAccentedCharacter(
+          imeClient,
+          character,
+          accentMark: accentMark,
+          settle: settle,
+          extraPumps: extraPumps,
+        );
+      } else {
+        // This is a regular, non-accent character. Type it like normal.
+        await _typeCharacter(imeClient, character, settle: settle, extraPumps: extraPumps);
+      }
+
+      if (character == " ") {
+        await _applyReplacementTriggeredBySpace(imeClient, settle: settle, extraPumps: extraPumps);
+      }
     }
+  }
+
+  Future<void> _applyReplacementTriggeredBySpace(
+    DeltaTextInputClient imeClient, {
+    bool settle = true,
+    int extraPumps = 0,
+  }) async {
+    final currentValue = imeClient.currentTextEditingValue;
+    assert(currentValue != null, "The target widget doesn't have a text selection to replace in.");
+
+    final nonNullCurrentValue = currentValue!;
+    if (!nonNullCurrentValue.selection.isCollapsed || nonNullCurrentValue.selection.extentOffset < 2) {
+      return;
+    }
+
+    final caretOffset = nonNullCurrentValue.selection.extentOffset;
+    if (nonNullCurrentValue.text.substring(caretOffset - 1, caretOffset) != " ") {
+      return;
+    }
+
+    final wordEnd = caretOffset - 1;
+    if (_isSpace(nonNullCurrentValue.text.substring(wordEnd - 1, wordEnd))) {
+      return;
+    }
+
+    var wordStart = wordEnd - 1;
+    while (wordStart > 0 && !_isSpace(nonNullCurrentValue.text.substring(wordStart - 1, wordStart))) {
+      wordStart -= 1;
+    }
+
+    final typedWord = nonNullCurrentValue.text.substring(wordStart, wordEnd);
+    final replacement = _inputControl.expansions[typedWord] ?? _inputControl.autocorrects[typedWord];
+    if (replacement == null) {
+      return;
+    }
+
+    imeClient.updateEditingValueWithDeltas([
+      TextEditingDeltaReplacement(
+        oldText: nonNullCurrentValue.text,
+        replacedRange: TextRange(start: wordStart, end: wordEnd),
+        replacementText: replacement,
+        selection: TextSelection.collapsed(offset: wordStart + replacement.length + 1),
+        composing: TextRange.empty,
+      ),
+    ]);
+
+    // Let the app handle the deltas, however long it takes.
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
   Future<void> _typeCharacter(
@@ -126,13 +211,65 @@ class ImeSimulator {
 
     imeClient.updateEditingValueWithDeltas(deltas);
 
-    // TODO: Send messages through the standard channel when it works. For some reason, only the first test delivers
-    //       messages across the channel.
-    // Pretend that we're the host platform and send our IME deltas to the app, as
-    // if the user typed them.
-    // await _sendDeltasThroughChannel(deltas);
-
     // Let the app handle the deltas, however long it takes.
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<void> _typeAccentedCharacter(
+    DeltaTextInputClient imeClient,
+    String character, {
+    required String accentMark,
+    bool settle = true,
+    int extraPumps = 0,
+  }) async {
+    assert(imeClient.currentTextEditingValue != null);
+    assert(imeClient.currentTextEditingValue!.selection.extentOffset != -1);
+
+    final currentValue = imeClient.currentTextEditingValue!;
+    final insertionOffset = currentValue.selection.baseOffset;
+    final oldTextAfterSelectionDeletion = currentValue.text.replaceRange(
+      currentValue.selection.start,
+      currentValue.selection.end,
+      "",
+    );
+
+    if (!currentValue.selection.isCollapsed) {
+      imeClient.updateEditingValueWithDeltas([
+        TextEditingDeltaDeletion(
+          oldText: currentValue.text,
+          deletedRange: currentValue.selection,
+          selection: TextSelection.collapsed(offset: insertionOffset),
+          composing: TextRange.empty,
+        ),
+      ]);
+      await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+    }
+
+    imeClient.updateEditingValueWithDeltas([
+      TextEditingDeltaInsertion(
+        oldText: oldTextAfterSelectionDeletion,
+        textInserted: accentMark,
+        insertionOffset: insertionOffset,
+        selection: TextSelection.collapsed(offset: insertionOffset + accentMark.length),
+        composing: TextRange(start: insertionOffset, end: insertionOffset + accentMark.length),
+      ),
+    ]);
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+
+    final oldTextWithAccentMark = oldTextAfterSelectionDeletion.replaceRange(
+      insertionOffset,
+      insertionOffset,
+      accentMark,
+    );
+    imeClient.updateEditingValueWithDeltas([
+      TextEditingDeltaReplacement(
+        oldText: oldTextWithAccentMark,
+        replacedRange: TextRange(start: insertionOffset, end: insertionOffset + accentMark.length),
+        replacementText: character,
+        selection: TextSelection.collapsed(offset: insertionOffset + character.length),
+        composing: TextRange.empty,
+      ),
+    ]);
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
   }
 
@@ -187,13 +324,96 @@ class ImeSimulator {
 
     imeClient.updateEditingValueWithDeltas(deltas);
 
-    // TODO: Send messages through the standard channel when it works. For some reason, only the first test delivers
-    //       messages across the channel.
-    // Send a delta for a backspace behavior.
-    //
-    // If the selection is collapsed, we backspace a single character. If the selection is expanded,
-    // we delete the selection.
-    // await _sendDeltasThroughChannel(deltas);
+    // Let the app handle the deltas, however long it takes.
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+  }
+
+  /// Simulates the user pressing the delete button on a software keyboard.
+  ///
+  /// If the selection is collapsed, the downstream character is deleted. If the selection is expanded, then the
+  /// selection is deleted.
+  Future<void> delete({
+    bool settle = true,
+    int extraPumps = 0,
+  }) async {
+    final imeClient = await _getImeClient();
+    final currentValue = imeClient.currentTextEditingValue;
+
+    assert(currentValue != null, "The target widget doesn't have a text selection to delete in.");
+    assert(currentValue!.selection.extentOffset != -1, "The target widget doesn't have a text selection to delete in.");
+    final nonNullCurrentValue = currentValue!;
+
+    if (nonNullCurrentValue.selection.isCollapsed &&
+        nonNullCurrentValue.selection.extentOffset == nonNullCurrentValue.text.length) {
+      // Caret is at the end of the text. Nothing to delete.
+      return;
+    }
+
+    final deletedRange = nonNullCurrentValue.selection.isCollapsed
+        ? TextRange(
+            start: nonNullCurrentValue.selection.start,
+            end: nonNullCurrentValue.selection.start + 1,
+          )
+        : nonNullCurrentValue.selection;
+
+    final deltas = [
+      TextEditingDeltaDeletion(
+        oldText: nonNullCurrentValue.text,
+        deletedRange: deletedRange,
+        selection: TextSelection.collapsed(offset: deletedRange.start),
+        composing: TextRange.empty,
+      ),
+    ];
+
+    imeClient.updateEditingValueWithDeltas(deltas);
+
+    // Let the app handle the deltas, however long it takes.
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+  }
+
+  /// Simulates the user pressing the software keyboard's action button.
+  Future<void> pressAction(
+    TextInputAction action, {
+    bool settle = true,
+    int extraPumps = 0,
+  }) async {
+    final imeClient = await _getTextInputClient();
+
+    imeClient.performAction(action);
+
+    // Let the app handle the action, however long it takes.
+    await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+  }
+
+  /// Simulates the user accepting a text replacement suggestion from the software keyboard.
+  Future<void> acceptTextReplacementSuggestion({
+    required TextRange replacedRange,
+    required String replacementText,
+    bool settle = true,
+    int extraPumps = 0,
+  }) async {
+    final imeClient = await _getImeClient();
+    final currentValue = imeClient.currentTextEditingValue;
+
+    assert(currentValue != null, "The target widget doesn't have a text selection to replace in.");
+    assert(
+      replacedRange.isValid && replacedRange.start >= 0 && replacedRange.end <= currentValue!.text.length,
+      "The replaced range must be within the current text.",
+    );
+    final nonNullCurrentValue = currentValue!;
+
+    final newSelection = TextSelection.collapsed(offset: replacedRange.start + replacementText.length);
+    final deltas = [
+      TextEditingDeltaReplacement(
+        oldText: nonNullCurrentValue.text,
+        replacedRange: replacedRange,
+        replacementText: replacementText,
+        selection: newSelection,
+        composing: TextRange.empty,
+      ),
+    ];
+
+    imeClient.updateEditingValueWithDeltas(deltas);
 
     // Let the app handle the deltas, however long it takes.
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
@@ -221,6 +441,14 @@ class ImeSimulator {
 
     // Let the app handle the deltas.
     await _maybeSettleOrExtraPumps(settle: settle, extraPumps: extraPumps);
+  }
+
+  Future<TextInputClient> _getTextInputClient() async {
+    _inputControl.install();
+    if (!_inputControl.hasActiveClient) {
+      await _requestExistingInputState();
+    }
+    return _inputControl.textInputClient;
   }
 
   Future<DeltaTextInputClient> _getImeClient({
@@ -251,24 +479,6 @@ class ImeSimulator {
     }
   }
 
-  // ignore: unused_element
-  Future<void> _sendDeltasThroughChannel(List<TextEditingDelta> deltas) async {
-    await _sendTextInputMethodCall(
-      MethodCall(
-        'TextInputClient.updateEditingStateWithDeltas',
-        <dynamic>[
-          -1,
-          {
-            "deltas": [
-              for (final delta in deltas) //
-                _deltaToJson(delta, delta.oldText),
-            ],
-          },
-        ],
-      ),
-    );
-  }
-
   Future<void> _requestExistingInputState() async {
     await _sendTextInputMethodCall(
       const MethodCall('TextInputClient.requestExistingInputState'),
@@ -283,73 +493,6 @@ class ImeSimulator {
     );
   }
 
-  Map<String, dynamic> _deltaToJson(TextEditingDelta delta, String oldText) {
-    if (delta is TextEditingDeltaInsertion) {
-      return {
-        "oldText": oldText,
-        "deltaStart": delta.insertionOffset,
-        "deltaEnd": delta.insertionOffset,
-        "deltaText": delta.textInserted,
-        "selectionBase": delta.selection.baseOffset,
-        "selectionExtent": delta.selection.extentOffset,
-        "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
-        "selectionIsDirection": false,
-        "composingBase": -1,
-        "composingExtent": -1,
-      };
-    } else if (delta is TextEditingDeltaReplacement) {
-      return {
-        "oldText": oldText,
-        "deltaStart": delta.replacedRange.start,
-        "deltaEnd": delta.replacedRange.end,
-        "deltaText": delta.replacementText,
-        "selectionBase": delta.selection.baseOffset,
-        "selectionExtent": delta.selection.extentOffset,
-        "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
-        "selectionIsDirection": false,
-        "composingBase": -1,
-        "composingExtent": -1,
-      };
-    } else if (delta is TextEditingDeltaDeletion) {
-      return {
-        "oldText": oldText,
-        "deltaStart": delta.deletedRange.start,
-        "deltaEnd": delta.deletedRange.end,
-        "deltaText": "",
-        "selectionBase": delta.selection.baseOffset,
-        "selectionExtent": delta.selection.extentOffset,
-        "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
-        "selectionIsDirection": false,
-        "composingBase": -1,
-        "composingExtent": -1,
-      };
-    } else if (delta is TextEditingDeltaNonTextUpdate) {
-      return {
-        "oldText": oldText,
-        "deltaStart": -1,
-        "deltaEnd": -1,
-        "deltaText": "",
-        "selectionBase": delta.selection.baseOffset,
-        "selectionExtent": delta.selection.extentOffset,
-        "selectionAffinity": _fromTextAffinity(delta.selection.affinity),
-        "selectionIsDirection": delta.selection.isDirectional,
-        "composingBase": delta.composing.start,
-        "composingExtent": delta.composing.end,
-      };
-    }
-
-    throw Exception("Invalid delta: $delta");
-  }
-
-  String _fromTextAffinity(TextAffinity affinity) {
-    switch (affinity) {
-      case TextAffinity.downstream:
-        return 'TextAffinity.downstream';
-      case TextAffinity.upstream:
-        return 'TextAffinity.upstream';
-    }
-  }
-
   Future<void> _maybeSettleOrExtraPumps({bool settle = true, int extraPumps = 0}) async {
     if (settle) {
       await _tester.pumpAndSettle();
@@ -360,28 +503,104 @@ class ImeSimulator {
   }
 }
 
+bool _isSpace(String character) => character.trim().isEmpty;
+
 typedef GetDeltaTextInputClient = DeltaTextInputClient Function();
 
-class _SimulatedImeTextInputControl with TextInputControl {
-  _SimulatedImeTextInputControl._();
+const _macOsDeadKeyAccentedCharacters = {
+  "á": "´",
+  "Á": "´",
+  "é": "´",
+  "É": "´",
+  "í": "´",
+  "Í": "´",
+  "ó": "´",
+  "Ó": "´",
+  "ú": "´",
+  "Ú": "´",
+  "ý": "´",
+  "Ý": "´",
+  "à": "`",
+  "À": "`",
+  "è": "`",
+  "È": "`",
+  "ì": "`",
+  "Ì": "`",
+  "ò": "`",
+  "Ò": "`",
+  "ù": "`",
+  "Ù": "`",
+  "â": "ˆ",
+  "Â": "ˆ",
+  "ê": "ˆ",
+  "Ê": "ˆ",
+  "î": "ˆ",
+  "Î": "ˆ",
+  "ô": "ˆ",
+  "Ô": "ˆ",
+  "û": "ˆ",
+  "Û": "ˆ",
+  "ã": "˜",
+  "Ã": "˜",
+  "ñ": "˜",
+  "Ñ": "˜",
+  "õ": "˜",
+  "Õ": "˜",
+  "ä": "¨",
+  "Ä": "¨",
+  "ë": "¨",
+  "Ë": "¨",
+  "ï": "¨",
+  "Ï": "¨",
+  "ö": "¨",
+  "Ö": "¨",
+  "ü": "¨",
+  "Ü": "¨",
+  "ÿ": "¨",
+  "Ÿ": "¨",
+};
 
+class _SimulatedImeTextInputControl with TextInputControl {
   static final _SimulatedImeTextInputControl instance = _SimulatedImeTextInputControl._();
 
-  TextInputClient? _client;
+  _SimulatedImeTextInputControl._();
+
   TextInputConfiguration? _configuration;
-  TextEditingValue? _editingValue;
-  bool _isInstalled = false;
-  bool _isVisible = false;
 
+  /// Whether the simulated IME is currently registered as Flutter's text input control.
+  ///
+  /// Tests can use this to verify that an IME interaction installed the simulator before attempting to target the
+  /// active text input client.
   bool get isInstalled => _isInstalled;
+  bool _isInstalled = false;
 
+  /// Whether Flutter has attached a text input client to the simulated IME.
+  ///
+  /// Tests can use this to verify that focus created an app-facing text input connection before sending IME deltas.
   bool get hasActiveClient => _client != null;
+  TextInputClient? _client;
 
-  bool get isVisible => _isVisible;
+  /// Whether Flutter has requested that the simulated keyboard be shown.
+  ///
+  /// Tests can use this to verify the normal text input lifecycle when the simulator is installed before focus is
+  /// received.
+  bool get isKeyboardVisible => _isKeyboardVisible;
+  bool _isKeyboardVisible = false;
 
+  /// The latest editing value known to the simulated IME.
+  ///
+  /// Tests can use this to verify that the app and simulated IME agree on text, selection, and composing state after an
+  /// interaction.
   TextEditingValue? get currentTextEditingValue => _client?.currentTextEditingValue ?? _editingValue;
+  TextEditingValue? _editingValue;
 
-  DeltaTextInputClient get deltaTextInputClient {
+  Map<String, String> get expansions => _expansions;
+  Map<String, String> _expansions = const {};
+
+  Map<String, String> get autocorrects => _autocorrects;
+  Map<String, String> _autocorrects = const {};
+
+  TextInputClient get textInputClient {
     final client = _client;
 
     if (client == null) {
@@ -389,6 +608,12 @@ class _SimulatedImeTextInputControl with TextInputControl {
         "There isn't an active text input client. Focus a text input before simulating IME behavior.",
       );
     }
+
+    return client;
+  }
+
+  DeltaTextInputClient get deltaTextInputClient {
+    final client = textInputClient;
 
     if (_configuration?.enableDeltaModel != true) {
       throw StateError(
@@ -408,7 +633,17 @@ class _SimulatedImeTextInputControl with TextInputControl {
     return client;
   }
 
-  void install() {
+  void install({
+    Map<String, String>? expansions,
+    Map<String, String>? autocorrects,
+  }) {
+    if (expansions != null) {
+      _expansions = Map.unmodifiable(expansions);
+    }
+    if (autocorrects != null) {
+      _autocorrects = Map.unmodifiable(autocorrects);
+    }
+
     if (_isInstalled) {
       return;
     }
@@ -427,7 +662,9 @@ class _SimulatedImeTextInputControl with TextInputControl {
     _client = null;
     _configuration = null;
     _editingValue = null;
-    _isVisible = false;
+    _isKeyboardVisible = false;
+    _expansions = const {};
+    _autocorrects = const {};
   }
 
   @override
@@ -443,18 +680,18 @@ class _SimulatedImeTextInputControl with TextInputControl {
       _client = null;
       _configuration = null;
       _editingValue = null;
-      _isVisible = false;
+      _isKeyboardVisible = false;
     }
   }
 
   @override
   void show() {
-    _isVisible = true;
+    _isKeyboardVisible = true;
   }
 
   @override
   void hide() {
-    _isVisible = false;
+    _isKeyboardVisible = false;
   }
 
   @override

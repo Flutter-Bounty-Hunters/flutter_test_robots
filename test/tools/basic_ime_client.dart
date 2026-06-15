@@ -8,9 +8,13 @@ class BareBonesTextFieldWithInputClient extends StatefulWidget {
   const BareBonesTextFieldWithInputClient({
     Key? key,
     this.initialValue,
+    this.onPerformAction,
+    this.onUpdateEditingValueWithDeltas,
   }) : super(key: key);
 
   final TextEditingValue? initialValue;
+  final ValueChanged<TextInputAction>? onPerformAction;
+  final ValueChanged<List<TextEditingDelta>>? onUpdateEditingValueWithDeltas;
 
   @override
   State createState() => _BareBonesTextFieldWithInputClientState();
@@ -91,7 +95,9 @@ class _BareBonesTextFieldWithInputClientState extends State<BareBonesTextFieldWi
   late TextEditingValue _currentTextEditingValue;
 
   @override
-  void performAction(TextInputAction action) {}
+  void performAction(TextInputAction action) {
+    widget.onPerformAction?.call(action);
+  }
 
   @override
   void performPrivateCommand(String action, Map<String, dynamic> data) {}
@@ -101,6 +107,8 @@ class _BareBonesTextFieldWithInputClientState extends State<BareBonesTextFieldWi
 
   @override
   void updateEditingValueWithDeltas(List<TextEditingDelta> textEditingDeltas) {
+    widget.onUpdateEditingValueWithDeltas?.call(textEditingDeltas);
+
     setState(() {
       for (final delta in textEditingDeltas) {
         FtrTestLogs.imeTestClientLog.info("Handling delta: $delta");
