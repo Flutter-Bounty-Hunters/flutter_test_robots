@@ -1,3 +1,10 @@
+## 1.2.0
+### June 15, 2026
+ * ADJUSTMENT: More IME behaviors added to IME simulator.
+ * DEPRECATION: IME simulator no longer requires explicit finders or getters to locate the
+   `DeltaTextInputClient` for the active editor or text field. We now hijack Flutter's
+   `TextInputControl` to find the `TextInputClient` and send the deltas there.
+
 ## 1.1.0
 ### June 14, 2026
  * FEATURE: `WidgetTester` extensions for device configurations, e.g., `tester.asIPhone16ProMax()`.
